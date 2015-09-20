@@ -4,6 +4,14 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+    permissionService:
+        class: AppBundle\Extensions\PermissionService
+        arguments: [@doctrine.orm.entity_manager]
+
+    responseService:
+        class: AppBundle\Extensions\ResponseService
+        arguments: [@serializer]
+
+    userService:
+        class: AppBundle\Extensions\UserService
+        arguments: [@doctrine.orm.entity_manager]

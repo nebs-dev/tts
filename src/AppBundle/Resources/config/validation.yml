@@ -1,0 +1,20 @@
+AppBundle\Entity\User:
+    constraints:
+            - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: token
+            - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+
+    properties:
+        name:
+            - NotBlank:
+        email:
+            - NotBlank:
+            - Email:
+        password:
+            - NotBlank:
+        platform:
+            - NotBlank:
+            - Type:
+                type: int
+            - Range:
+                min: 0
+                max: 1

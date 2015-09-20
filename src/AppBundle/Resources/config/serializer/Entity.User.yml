@@ -1,0 +1,13 @@
+AppBundle\Entity\User:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+        name:
+            expose: true
+        email:
+            expose: true
+        photo:
+            expose: true
+        platform:
+            expose: true
