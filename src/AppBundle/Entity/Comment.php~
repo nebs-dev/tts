@@ -83,4 +83,52 @@ class Comment {
     public function getText() {
         return $this->text;
     }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Comment
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set place
+     *
+     * @param \AppBundle\Entity\Place $place
+     *
+     * @return Comment
+     */
+    public function setPlace(\AppBundle\Entity\Place $place = null)
+    {
+        $this->place = $place;
+
+        return $this;
+    }
+
+    /**
+     * Get place
+     *
+     * @return \AppBundle\Entity\Place
+     */
+    public function getPlace()
+    {
+        return $this->place;
+    }
 }

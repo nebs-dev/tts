@@ -44,12 +44,18 @@ class UserService {
         $platform = json_decode($request->request->get('platform'));
         $token = $request->request->get('token');
 
-        $user->setName($name);
-        $user->setEmail($email);
-        $user->setPassword($password);
-        $user->setPhoto($photo);
-        $user->setPlatform($platform);
-        $user->setToken($token);
+        if($name)
+            $user->setName($name);
+        if($email)
+            $user->setEmail($email);
+        if($password)
+            $user->setPassword($password);
+        if($photo)
+            $user->setPhoto($photo);
+        if($platform)
+            $user->setPlatform($platform);
+        if($token)
+            $user->setToken($token);
 
         return $user;
     }

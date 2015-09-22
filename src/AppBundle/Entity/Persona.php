@@ -38,6 +38,22 @@ class Persona {
     private $wikipedia;
 
     /**
+     * @ORM\Column(type="decimal", precision=20, scale=18)
+     */
+    private $long;
+
+    /**
+     * @ORM\Column(type="decimal", precision=20, scale=18)
+     */
+    private $lat;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Place", inversedBy="personas")
+     */
+    private $places;
+
+
+    /**
      * Get id
      *
      * @return integer
@@ -132,5 +148,87 @@ class Persona {
      */
     public function getWikipedia() {
         return $this->wikipedia;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->places = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add place
+     *
+     * @param \AppBundle\Entity\Place $place
+     *
+     * @return Persona
+     */
+    public function addPlace(\AppBundle\Entity\Place $place) {
+        $this->places[] = $place;
+
+        return $this;
+    }
+
+    /**
+     * Remove place
+     *
+     * @param \AppBundle\Entity\Place $place
+     */
+    public function removePlace(\AppBundle\Entity\Place $place) {
+        $this->places->removeElement($place);
+    }
+
+    /**
+     * Get places
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPlaces() {
+        return $this->places;
+    }
+
+    /**
+     * Set long
+     *
+     * @param string $long
+     *
+     * @return Persona
+     */
+    public function setLong($long) {
+        $this->long = $long;
+
+        return $this;
+    }
+
+    /**
+     * Get long
+     *
+     * @return string
+     */
+    public function getLong() {
+        return $this->long;
+    }
+
+    /**
+     * Set lat
+     *
+     * @param string $lat
+     *
+     * @return Persona
+     */
+    public function setLat($lat) {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    /**
+     * Get lat
+     *
+     * @return string
+     */
+    public function getLat() {
+        return $this->lat;
     }
 }

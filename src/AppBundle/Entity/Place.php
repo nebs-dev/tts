@@ -33,9 +33,24 @@ class Place {
     private $address;
 
     /**
+     * @ORM\Column(type="decimal", precision=20, scale=18)
+     */
+    private $long;
+
+    /**
+     * @ORM\Column(type="decimal", precision=20, scale=18)
+     */
+    private $lat;
+
+    /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="place", cascade={"all"})
      */
     private $comments;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Persona", mappedBy="places")
+     */
+    private $personas;
 
     /**
      * Get id
@@ -148,5 +163,84 @@ class Place {
      */
     public function getComments() {
         return $this->comments;
+    }
+
+    /**
+     * Add persona
+     *
+     * @param \AppBundle\Entity\Persona $persona
+     *
+     * @return Place
+     */
+    public function addPersona(\AppBundle\Entity\Persona $persona) {
+        $this->personas[] = $persona;
+
+        return $this;
+    }
+
+    /**
+     * Remove persona
+     *
+     * @param \AppBundle\Entity\Persona $persona
+     */
+    public function removePersona(\AppBundle\Entity\Persona $persona) {
+        $this->personas->removeElement($persona);
+    }
+
+    /**
+     * Get personas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPersonas() {
+        return $this->personas;
+    }
+
+    /**
+     * Set long
+     *
+     * @param string $long
+     *
+     * @return Place
+     */
+    public function setLong($long)
+    {
+        $this->long = $long;
+
+        return $this;
+    }
+
+    /**
+     * Get long
+     *
+     * @return string
+     */
+    public function getLong()
+    {
+        return $this->long;
+    }
+
+    /**
+     * Set lat
+     *
+     * @param string $lat
+     *
+     * @return Place
+     */
+    public function setLat($lat)
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    /**
+     * Get lat
+     *
+     * @return string
+     */
+    public function getLat()
+    {
+        return $this->lat;
     }
 }

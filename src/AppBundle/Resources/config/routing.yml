@@ -2,3 +2,8 @@ user:
   type:     rest
   resource: AppBundle\Controller\UserController
   prefix : /user
+
+place:
+  type:     rest
+  resource: AppBundle\Controller\PlaceController
+  prefix : /place

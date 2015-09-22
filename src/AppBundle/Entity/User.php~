@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 
 /**
  * User
@@ -34,12 +36,12 @@ class User {
     private $password;
 
     /**
-     * @ORM\Column(name="photo", type="text")
+     * @ORM\Column(name="photo", type="text", nullable=true)
      */
     private $photo;
 
     /**
-     * @ORM\Column(name="platform", type="boolean")
+     * @ORM\Column(name="platform", type="integer", options={"comment":"0 == android, 1 == ios"})
      */
     private $platform;
 
@@ -175,5 +177,43 @@ class User {
      */
     public function getToken() {
         return $this->token;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add comment
+     *
+     * @param \AppBundle\Entity\Comment $comment
+     *
+     * @return User
+     */
+    public function addComment(\AppBundle\Entity\Comment $comment) {
+        $this->comments[] = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Remove comment
+     *
+     * @param \AppBundle\Entity\Comment $comment
+     */
+    public function removeComment(\AppBundle\Entity\Comment $comment) {
+        $this->comments->removeElement($comment);
+    }
+
+    /**
+     * Get comments
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getComments() {
+        return $this->comments;
     }
 }
