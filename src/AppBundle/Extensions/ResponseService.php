@@ -18,15 +18,15 @@ class ResponseService {
             $errors = json_decode($this->serializer->serialize($errors, 'json'));
         }
 
-        return new JSonResponse(array('error' => array('code' => 400,'message' => 'Bad Request','exception' => $errors)),400);
+        return new JSonResponse(array('status' => 'ERROR', 'code' => 400,'message' => 'Bad Request','data' => $errors),400);
     }
 
     public function accessDenied() {
-        return new JSonResponse(array('error' => array('code' => 403,'message' => 'Access Denied')),403);
+        return new JSonResponse(array('status' => 'ERROR', 'code' => 403,'message' => 'Access Denied'),403);
     }
 
     public function success($data) {
         $json = json_decode($this->serializer->serialize($data, 'json'));
-        return new JSonResponse(array('success' => array('code' => 200,'message' => 'OK','data' => $json)),200);
+        return new JSonResponse(array('status' => 'OK', 'code' => 200,'message' => 'OK','data' => $json),200);
     }
 }
