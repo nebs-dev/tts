@@ -7,3 +7,8 @@ place:
   type:     rest
   resource: AppBundle\Controller\PlaceController
   prefix : /place
+
+persona:
+  type:     rest
+  resource: AppBundle\Controller\PersonaController
+  prefix : /persona

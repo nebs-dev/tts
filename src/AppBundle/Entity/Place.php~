@@ -197,4 +197,47 @@ class Place {
     }
 
 
+    /**
+     * Set lat
+     *
+     * @param float $lat
+     *
+     * @return Place
+     */
+    public function setLat($lat) {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    /**
+     * Get lat
+     *
+     * @return float
+     */
+    public function getLat() {
+        return $this->lat;
+    }
+
+    /**
+     * Set lng
+     *
+     * @param float $lng
+     *
+     * @return Place
+     */
+    public function setLng($lng) {
+        $this->lng = $lng;
+
+        return $this;
+    }
+
+    /**
+     * Get lng
+     *
+     * @return float
+     */
+    public function getLng() {
+        return $this->lng;
+    }
 }

@@ -38,12 +38,12 @@ class Persona {
     private $wikipedia;
 
     /**
-     * @ORM\Column(type="decimal", precision=20, scale=18)
+     * @ORM\Column(type="float", precision=20, scale=18)
      */
-    private $long;
+    private $lng;
 
     /**
-     * @ORM\Column(type="decimal", precision=20, scale=18)
+     * @ORM\Column(type="float", precision=20, scale=18)
      */
     private $lat;
 
@@ -188,32 +188,33 @@ class Persona {
         return $this->places;
     }
 
+
     /**
-     * Set long
+     * Set lng
      *
-     * @param string $long
+     * @param float $lng
      *
      * @return Persona
      */
-    public function setLong($long) {
-        $this->long = $long;
+    public function setLng($lng) {
+        $this->lng = $lng;
 
         return $this;
     }
 
     /**
-     * Get long
+     * Get lng
      *
-     * @return string
+     * @return float
      */
-    public function getLong() {
-        return $this->long;
+    public function getLng() {
+        return $this->lng;
     }
 
     /**
      * Set lat
      *
-     * @param string $lat
+     * @param float $lat
      *
      * @return Persona
      */
@@ -226,7 +227,7 @@ class Persona {
     /**
      * Get lat
      *
-     * @return string
+     * @return float
      */
     public function getLat() {
         return $this->lat;

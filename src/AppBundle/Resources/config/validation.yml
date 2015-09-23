@@ -41,3 +41,27 @@ AppBundle\Entity\Place:
             - NotBlank: ~
             - Type:
                 type: float
+
+AppBundle\Entity\Persona:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+
+    properties:
+        name:
+            - NotBlank:
+            - Length:
+                max: 100
+        occupation:
+            - NotBlank:
+        description:
+            - NotBlank:
+        wikipedia:
+            - Url: ~
+        lat:
+            - NotBlank: ~
+            - Type:
+                type: float
+        lng:
+            - NotBlank: ~
+            - Type:
+                type: float

@@ -19,3 +19,7 @@ services:
     placeService:
         class: AppBundle\Extensions\PlaceService
         arguments: [@doctrine.orm.entity_manager]
+
+    personaService:
+        class: AppBundle\Extensions\PersonaService
+        arguments: [@doctrine.orm.entity_manager]
