@@ -18,3 +18,26 @@ AppBundle\Entity\User:
             - Range:
                 min: 0
                 max: 1
+
+
+AppBundle\Entity\Place:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+
+    properties:
+        name:
+            - NotBlank:
+            - Length:
+                max: 100
+        description:
+            - NotBlank:
+        address:
+            - NotBlank:
+        lat:
+            - NotBlank: ~
+            - Type:
+                type: float
+        lng:
+            - NotBlank: ~
+            - Type:
+                type: float

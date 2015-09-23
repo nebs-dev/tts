@@ -15,3 +15,7 @@ services:
     userService:
         class: AppBundle\Extensions\UserService
         arguments: [@doctrine.orm.entity_manager]
+
+    placeService:
+        class: AppBundle\Extensions\PlaceService
+        arguments: [@doctrine.orm.entity_manager]

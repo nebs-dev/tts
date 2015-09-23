@@ -18,8 +18,13 @@ class PermissionService {
      * @return bool
      */
     public function checkToken($request) {
-        if($request->request->get('token')) {
-            if(count($this->em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'))) > 0)
+        if(isset($request->request)) {
+            if ($request->request->get('token')) {
+                if (count($this->em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'))) > 0)
+                    return true;
+            }
+        } else {
+            if (count($this->em->getRepository('AppBundle:User')->findOneByToken($request)) > 0)
                 return true;
         }
 

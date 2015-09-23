@@ -16,9 +16,6 @@ class UserController extends FOSRestController {
      * @Post("/signin")
      */
     public function postSigninAction(Request $request) {
-        if(!$this->get('permissionService')->checkToken($request))
-            return $this->get('responseService')->accessDenied();
-
         if(!$request->request->get('email') || !$request->request->get('password'))
             return $this->get('responseService')->badRequest();
 

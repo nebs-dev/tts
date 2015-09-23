@@ -33,14 +33,14 @@ class Place {
     private $address;
 
     /**
-     * @ORM\Column(type="decimal", precision=20, scale=18)
-     */
-    private $long;
-
-    /**
-     * @ORM\Column(type="decimal", precision=20, scale=18)
+     * @ORM\Column(type="float", precision=20, scale=18)
      */
     private $lat;
+
+    /**
+     * @ORM\Column(type="float", precision=20, scale=18)
+     */
+    private $lng;
 
     /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="place", cascade={"all"})
@@ -195,4 +195,6 @@ class Place {
     public function getPersonas() {
         return $this->personas;
     }
+
+
 }

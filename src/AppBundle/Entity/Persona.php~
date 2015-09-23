@@ -187,4 +187,48 @@ class Persona {
     public function getPlaces() {
         return $this->places;
     }
+
+    /**
+     * Set long
+     *
+     * @param string $long
+     *
+     * @return Persona
+     */
+    public function setLong($long) {
+        $this->long = $long;
+
+        return $this;
+    }
+
+    /**
+     * Get long
+     *
+     * @return string
+     */
+    public function getLong() {
+        return $this->long;
+    }
+
+    /**
+     * Set lat
+     *
+     * @param string $lat
+     *
+     * @return Persona
+     */
+    public function setLat($lat) {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    /**
+     * Get lat
+     *
+     * @return string
+     */
+    public function getLat() {
+        return $this->lat;
+    }
 }

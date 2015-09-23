@@ -31,8 +31,8 @@ class ResponseService {
      * Access Denied
      * @return JsonResponse
      */
-    public function accessDenied() {
-        return new JSonResponse(array('status' => 'ERROR', 'code' => 403,'message' => 'Access Denied'),403);
+    public function accessDenied($message = 'Access Denied') {
+        return new JSonResponse(array('status' => 'ERROR', 'code' => 403,'message' => $message),403);
     }
 
     /**

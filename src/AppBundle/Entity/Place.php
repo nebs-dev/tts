@@ -33,14 +33,14 @@ class Place {
     private $address;
 
     /**
-     * @ORM\Column(type="decimal", precision=20, scale=18)
-     */
-    private $long;
-
-    /**
-     * @ORM\Column(type="decimal", precision=20, scale=18)
+     * @ORM\Column(type="float", precision=20, scale=18)
      */
     private $lat;
+
+    /**
+     * @ORM\Column(type="float", precision=20, scale=18)
+     */
+    private $lng;
 
     /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="place", cascade={"all"})
@@ -196,39 +196,15 @@ class Place {
         return $this->personas;
     }
 
-    /**
-     * Set long
-     *
-     * @param string $long
-     *
-     * @return Place
-     */
-    public function setLong($long)
-    {
-        $this->long = $long;
-
-        return $this;
-    }
-
-    /**
-     * Get long
-     *
-     * @return string
-     */
-    public function getLong()
-    {
-        return $this->long;
-    }
 
     /**
      * Set lat
      *
-     * @param string $lat
+     * @param float $lat
      *
      * @return Place
      */
-    public function setLat($lat)
-    {
+    public function setLat($lat) {
         $this->lat = $lat;
 
         return $this;
@@ -237,10 +213,31 @@ class Place {
     /**
      * Get lat
      *
-     * @return string
+     * @return float
      */
-    public function getLat()
-    {
+    public function getLat() {
         return $this->lat;
+    }
+
+    /**
+     * Set lng
+     *
+     * @param float $lng
+     *
+     * @return Place
+     */
+    public function setLng($lng) {
+        $this->lng = $lng;
+
+        return $this;
+    }
+
+    /**
+     * Get lng
+     *
+     * @return float
+     */
+    public function getLng() {
+        return $this->lng;
     }
 }
