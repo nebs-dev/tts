@@ -44,6 +44,10 @@ class UserService {
         $platform = json_decode($request->request->get('platform'));
         $token = $request->request->get('token');
 
+//        echo'<pre>';
+//        exit(\Doctrine\Common\Util\Debug::dump($platform));
+//        echo'</pre>';
+
         if($name)
             $user->setName($name);
         if($email)

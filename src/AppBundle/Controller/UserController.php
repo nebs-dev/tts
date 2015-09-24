@@ -81,6 +81,7 @@ class UserController extends FOSRestController {
             return $this->get('responseService')->badRequest($errors);
         } else {
             $em = $this->getDoctrine()->getManager();
+            $user->encryptPassword();
             $em->persist($user);
             $em->flush();
             return $this->get('responseService')->success($user);

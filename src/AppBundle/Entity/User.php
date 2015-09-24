@@ -41,12 +41,12 @@ class User {
     private $photo;
 
     /**
-     * @ORM\Column(name="platform", type="integer", options={"comment":"0 == android, 1 == ios"})
+     * @ORM\Column(name="platform", type="integer", options={"comment":"2 == android, 1 == ios"})
      */
     private $platform;
 
     /**
-     * @ORM\Column(name="token", type="string", length=255)
+     * @ORM\Column(name="token", type="string", length=255, nullable=true)
      */
     private $token;
 
