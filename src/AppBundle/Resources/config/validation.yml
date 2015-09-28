@@ -1,7 +1,15 @@
 AppBundle\Entity\User:
     constraints:
-            - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: token
+            - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+                fields: token
+                ignoreNull: true
             - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+            - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+                fields: facebookId
+                ignoreNull: true
+            - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+                fields: twitterId
+                ignoreNull: true
 
     properties:
         name:

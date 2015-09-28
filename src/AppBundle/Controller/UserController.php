@@ -87,4 +87,32 @@ class UserController extends FOSRestController {
             return $this->get('responseService')->success($user);
         }
     }
+
+    /**
+     * @Post("/facebook/signin")
+     */
+    public function postFacebookSigninAction(Request $request) {
+        if(!$request->request->get('facebookId'))
+            return $this->get('responseService')->badRequest();
+
+        if($user = $this->get('userService')->loginFacebook($request)) {
+            return $this->get('responseService')->success($user);
+        }
+
+        return $this->get('responseService')->accessDenied();
+    }
+
+    /**
+     * @Post("/twitter/signin")
+     */
+    public function postTwitterSigninAction(Request $request) {
+        if(!$request->request->get('twitterId'))
+            return $this->get('responseService')->badRequest();
+
+        if($user = $this->get('userService')->loginTwitter($request)) {
+            return $this->get('responseService')->success($user);
+        }
+
+        return $this->get('responseService')->accessDenied();
+    }
 }

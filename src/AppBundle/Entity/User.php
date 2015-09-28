@@ -55,6 +55,16 @@ class User {
      */
     private $comments;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $facebookId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $twitterId;
+
 
     /**
      * @ORM\PrePersist
@@ -215,5 +225,49 @@ class User {
      */
     public function getComments() {
         return $this->comments;
+    }
+
+    /**
+     * Set facebookId
+     *
+     * @param string $facebookId
+     *
+     * @return User
+     */
+    public function setFacebookId($facebookId) {
+        $this->facebookId = $facebookId;
+
+        return $this;
+    }
+
+    /**
+     * Get facebookId
+     *
+     * @return string
+     */
+    public function getFacebookId() {
+        return $this->facebookId;
+    }
+
+    /**
+     * Set twitterId
+     *
+     * @param string $twitterId
+     *
+     * @return User
+     */
+    public function setTwitterId($twitterId) {
+        $this->twitterId = $twitterId;
+
+        return $this;
+    }
+
+    /**
+     * Get twitterId
+     *
+     * @return string
+     */
+    public function getTwitterId() {
+        return $this->twitterId;
     }
 }

@@ -41,12 +41,12 @@ class User {
     private $photo;
 
     /**
-     * @ORM\Column(name="platform", type="integer", options={"comment":"0 == android, 1 == ios"})
+     * @ORM\Column(name="platform", type="integer", options={"comment":"2 == android, 1 == ios"})
      */
     private $platform;
 
     /**
-     * @ORM\Column(name="token", type="string", length=255)
+     * @ORM\Column(name="token", type="string", length=255, nullable=true)
      */
     private $token;
 
@@ -54,6 +54,16 @@ class User {
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="user", cascade={"all"})
      */
     private $comments;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $facebookId;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $twitterId;
 
 
     /**

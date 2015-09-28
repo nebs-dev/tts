@@ -31,6 +31,32 @@ class UserService {
     }
 
     /**
+     * Login user with facebookId
+     * @param $request
+     * @return bool
+     */
+    public function loginFacebook($request) {
+        if($user = $this->userRepo->findOneByFacebookId($request->request->get('facebookId'))) {
+            return $user;
+        }
+
+        return false;
+    }
+
+    /**
+     * Login user with twitterId
+     * @param $request
+     * @return bool
+     */
+    public function loginTwitter($request) {
+        if($user = $this->userRepo->findOneByTwitterId($request->request->get('twitterId'))) {
+            return $user;
+        }
+
+        return false;
+    }
+
+    /**
      * Populate user object
      * @param $request
      * @param $user
@@ -42,11 +68,15 @@ class UserService {
         $password = $request->request->get('password');
         $photo = $request->request->get('photo');
         $platform = json_decode($request->request->get('platform'));
-        $token = $request->request->get('token');
+        $facebookId = $request->request->get('facebookId');
+        $twitterId = $request->request->get('twitterId');
 
-//        echo'<pre>';
-//        exit(\Doctrine\Common\Util\Debug::dump($platform));
-//        echo'</pre>';
+        $token = $request->request->get('token');
+        if(is_null($user->getToken()) && is_null($token)) {
+            $random = substr( md5(rand()), 0, 7);
+            $newToken = sha1('MIDGET' . $random .'NINJA');
+            $user->setToken($newToken);
+        }
 
         if($name)
             $user->setName($name);
@@ -58,8 +88,12 @@ class UserService {
             $user->setPhoto($photo);
         if($platform)
             $user->setPlatform($platform);
-        if($token)
-            $user->setToken($token);
+//        if($token)
+//            $user->setToken($token);
+        if($facebookId)
+            $user->setFacebookId($facebookId);
+        if($twitterId)
+            $user->setTwitterId($twitterId);
 
         return $user;
     }
