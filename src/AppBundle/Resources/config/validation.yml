@@ -65,3 +65,18 @@ AppBundle\Entity\Persona:
             - NotBlank: ~
             - Type:
                 type: float
+
+AppBundle\Entity\Comment:
+    properties:
+        text:
+            - NotBlank:
+            - Length:
+                max: 255
+        user:
+            - NotBlank:
+            - Type:
+                type: object
+        place:
+            - NotBlank:
+            - Type:
+                type: object

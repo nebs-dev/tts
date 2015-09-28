@@ -74,4 +74,26 @@ class PlaceService {
 
         return $places;
     }
+
+
+    /**
+     * Populate Comment object
+     * @param $request
+     * @param $place
+     * @return mixed
+     */
+    public function populateCommentObject($request, $comment) {
+        $text = $request->request->get('text');
+        $place = $this->em->getRepository('AppBundle:Place')->find(intval($request->request->get('place_id')));
+        $user = $this->em->getRepository('AppBundle:User')->find(intval($request->request->get('user_id')));
+
+        if ($text)
+            $comment->setText($text);
+        if ($place)
+            $comment->setPlace($place);
+        if ($user)
+            $comment->setUser($user);
+
+        return $comment;
+    }
 }
