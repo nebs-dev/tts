@@ -54,4 +54,12 @@ class ResponseService {
     public function notFound() {
         return new JSonResponse(array('status' => 'ERROR', 'code' => 404,'message' => 'Not Found'),200);
     }
+
+    /**
+     * Internal Server Error
+     * @return JsonResponse
+     */
+    public function internalServerError($message = 'Internal Server Error') {
+        return new JSonResponse(array('status' => 'ERROR', 'code' => 500,'message' => $message),200);
+    }
 }

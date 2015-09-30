@@ -52,6 +52,11 @@ class Persona {
      */
     private $places;
 
+    /**
+     * @ORM\OneToMany(targetEntity="PersonaGallery", mappedBy="persona", cascade={"all"})
+     */
+    private $gallery;
+
 
     /**
      * Get id
@@ -231,5 +236,36 @@ class Persona {
      */
     public function getLat() {
         return $this->lat;
+    }
+
+    /**
+     * Add gallery
+     *
+     * @param \AppBundle\Entity\PersonaGallery $gallery
+     *
+     * @return Persona
+     */
+    public function addGallery(\AppBundle\Entity\PersonaGallery $gallery) {
+        $this->gallery[] = $gallery;
+
+        return $this;
+    }
+
+    /**
+     * Remove gallery
+     *
+     * @param \AppBundle\Entity\PersonaGallery $gallery
+     */
+    public function removeGallery(\AppBundle\Entity\PersonaGallery $gallery) {
+        $this->gallery->removeElement($gallery);
+    }
+
+    /**
+     * Get gallery
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGallery() {
+        return $this->gallery;
     }
 }

@@ -53,6 +53,11 @@ class Place {
     private $personas;
 
     /**
+     * @ORM\OneToMany(targetEntity="PlaceGallery", mappedBy="place", cascade={"all"})
+     */
+    private $gallery;
+
+    /**
      * Get id
      *
      * @return integer

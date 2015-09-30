@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Persona;
+use AppBundle\Entity\PersonaGallery;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\Request;
@@ -109,6 +110,35 @@ class PersonaController extends FOSRestController {
         // find personas by search term
         $personas = $em->getRepository('AppBundle:Persona')->search($term);
         return $this->get('responseService')->success($personas);
+    }
+
+    /**
+     * @Post("/images/{personaId}", name="post_persona_image")
+     * @param Request $request
+     */
+    public function postImageAction(Request $request, $personaId) {
+        if(!$this->get('permissionService')->checkToken($request))
+            return $this->get('responseService')->accessDenied('INVALID_TOKEN');
+
+        // find place by ID
+        $em = $this->getDoctrine()->getManager();
+        $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
+        if(!$persona) return $this->get('responseService')->notFound();
+
+        // Upload image and save it to db
+        if($image = $this->get('uploadService')->uploadBase64File($request)) {
+            $personaImage = new PersonaGallery();
+            $personaImage->setPersona($persona);
+            $personaImage->setImage($image);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($personaImage);
+            $em->flush();
+
+            return $this->get('responseService')->success($personaImage);
+        } else {
+            return $this->get('responseService')->internalServerError();
+        }
     }
     
 }

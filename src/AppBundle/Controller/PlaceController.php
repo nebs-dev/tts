@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Comment;
 use AppBundle\Entity\Place;
+use AppBundle\Entity\PlaceGallery;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,6 +137,35 @@ class PlaceController extends FOSRestController {
             $em->persist($comment);
             $em->flush();
             return $this->get('responseService')->success($comment);
+        }
+    }
+
+    /**
+     * @Post("/images/{placeId}", name="post_place_image")
+     * @param Request $request
+     */
+    public function postImageAction(Request $request, $placeId) {
+        if(!$this->get('permissionService')->checkToken($request))
+            return $this->get('responseService')->accessDenied('INVALID_TOKEN');
+
+        // find place by ID
+        $em = $this->getDoctrine()->getManager();
+        $place = $em->getRepository('AppBundle:Place')->find($placeId);
+        if(!$place) return $this->get('responseService')->notFound();
+
+        // Upload image and save it to db
+        if($image = $this->get('uploadService')->uploadBase64File($request)) {
+            $placeImage = new PlaceGallery();
+            $placeImage->setPlace($place);
+            $placeImage->setImage($image);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($placeImage);
+            $em->flush();
+
+            return $this->get('responseService')->success($placeImage);
+        } else {
+            return $this->get('responseService')->internalServerError();
         }
     }
 

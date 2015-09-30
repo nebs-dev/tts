@@ -23,3 +23,7 @@ services:
     personaService:
         class: AppBundle\Extensions\PersonaService
         arguments: [@doctrine.orm.entity_manager]
+
+    uploadService:
+        class: AppBundle\Extensions\UploadService
+        arguments: [@doctrine.orm.entity_manager, @service_container]

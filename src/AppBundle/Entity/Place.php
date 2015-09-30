@@ -53,6 +53,11 @@ class Place {
     private $personas;
 
     /**
+     * @ORM\OneToMany(targetEntity="PlaceGallery", mappedBy="place", cascade={"all"})
+     */
+    private $gallery;
+
+    /**
      * Get id
      *
      * @return integer
@@ -239,5 +244,36 @@ class Place {
      */
     public function getLng() {
         return $this->lng;
+    }
+
+    /**
+     * Add gallery
+     *
+     * @param \AppBundle\Entity\PlaceGallery $gallery
+     *
+     * @return Place
+     */
+    public function addGallery(\AppBundle\Entity\PlaceGallery $gallery) {
+        $this->gallery[] = $gallery;
+
+        return $this;
+    }
+
+    /**
+     * Remove gallery
+     *
+     * @param \AppBundle\Entity\PlaceGallery $gallery
+     */
+    public function removeGallery(\AppBundle\Entity\PlaceGallery $gallery) {
+        $this->gallery->removeElement($gallery);
+    }
+
+    /**
+     * Get gallery
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGallery() {
+        return $this->gallery;
     }
 }
