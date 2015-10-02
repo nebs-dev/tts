@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\User;
+use Facebook\Facebook;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\Request;
@@ -86,6 +87,42 @@ class UserController extends FOSRestController {
             $em->flush();
             return $this->get('responseService')->success($user);
         }
+    }
+
+    /**
+     * @Get("/test")
+     */
+    public function testAction() {
+        $fb = new Facebook([
+            'app_id' => '416061541919312',
+            'app_secret' => 'e6e4a0ac76a00566393be42f5fd05cc6',
+            'default_graph_version' => 'v2.2'
+        ]);
+
+        $accessToken = 'CAAF6ZAZBBpKlABAEuHvwpkVFHLS7MdL6odahwKliPAvkD6dkmJxk175uiaebDBfebMyZCVxfFJNqwffJ9BwpAve5ZBihuA4rOlk08mbkzVRJOq2kOe1PZB7OnbtmdkcI4DQSMO7MZCscZBz9vU1PMgmdPYWTzC0YfZBFMJOhzvx9vypQKZA9w9k3tK6uhoVHPLRPBcDKyZBVhT3Of9I0e7ZASSgLfMNXs3caqkZD';
+        $fb->setDefaultAccessToken($accessToken);
+
+        $myID = '100003197765742';
+
+        try {
+            $response = $fb->get('/100003197765742?fields=id,name,picture,email');
+            $userNode = $response->getGraphUser();
+
+            echo'<pre>';
+            exit(\Doctrine\Common\Util\Debug::dump($userNode->getPicture()['url']));
+            echo'</pre>';
+
+        } catch(\FacebookResponseException $e) {
+            // When Graph returns an error
+            echo 'Graph returned an error: ' . $e->getMessage();
+            exit;
+        } catch(\FacebookSDKException $e) {
+            // When validation fails or other local issues
+            echo 'Facebook SDK returned an error: ' . $e->getMessage();
+            exit;
+        }
+
+        return $this->get('responseService')->success('OK');
     }
 
     /**

@@ -72,6 +72,12 @@ class PlaceService {
             'radius' => $radius
         ))->fetchAll();
 
+
+        foreach($places as &$place) {
+            $placeObj = $this->em->getRepository('AppBundle:Place')->find($place['id']);
+            $place['personas'] = $placeObj->getPersonas();
+        }
+
         return $places;
     }
 
