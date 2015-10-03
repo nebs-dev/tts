@@ -21,17 +21,17 @@ class User {
     private $id;
 
     /**
-     * @ORM\Column(name="name", type="string", length=100)
+     * @ORM\Column(name="name", type="string", length=100, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(name="email", type="string", length=100)
+     * @ORM\Column(name="email", type="string", length=100, nullable=true)
      */
     private $email;
 
     /**
-     * @ORM\Column(name="password", type="string", length=255)
+     * @ORM\Column(name="password", type="string", length=255, nullable=true)
      */
     private $password;
 
@@ -56,14 +56,14 @@ class User {
     private $comments;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity="Facebook", cascade={"all"})
      */
-    private $facebookId;
+    private $facebook;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity="Twitter", cascade={"all"})
      */
-    private $twitterId;
+    private $twitter;
 
 
     /**
@@ -227,47 +227,48 @@ class User {
         return $this->comments;
     }
 
+
     /**
-     * Set facebookId
+     * Set facebook
      *
-     * @param string $facebookId
+     * @param \AppBundle\Entity\Facebook $facebook
      *
      * @return User
      */
-    public function setFacebookId($facebookId) {
-        $this->facebookId = $facebookId;
+    public function setFacebook(\AppBundle\Entity\Facebook $facebook = null) {
+        $this->facebook = $facebook;
 
         return $this;
     }
 
     /**
-     * Get facebookId
+     * Get facebook
      *
-     * @return string
+     * @return \AppBundle\Entity\Facebook
      */
-    public function getFacebookId() {
-        return $this->facebookId;
+    public function getFacebook() {
+        return $this->facebook;
     }
 
     /**
-     * Set twitterId
+     * Set twitter
      *
-     * @param string $twitterId
+     * @param \AppBundle\Entity\Twitter $twitter
      *
      * @return User
      */
-    public function setTwitterId($twitterId) {
-        $this->twitterId = $twitterId;
+    public function setTwitter(\AppBundle\Entity\Twitter $twitter = null) {
+        $this->twitter = $twitter;
 
         return $this;
     }
 
     /**
-     * Get twitterId
+     * Get twitter
      *
-     * @return string
+     * @return \AppBundle\Entity\Twitter
      */
-    public function getTwitterId() {
-        return $this->twitterId;
+    public function getTwitter() {
+        return $this->twitter;
     }
 }

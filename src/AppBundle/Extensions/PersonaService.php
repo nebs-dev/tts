@@ -74,6 +74,11 @@ class PersonaService {
             'radius' => $radius
         ))->fetchAll();
 
+        foreach($personas as &$persona) {
+            $personaObj = $this->em->getRepository('AppBundle:Place')->find($persona['id']);
+            $persona['places'] = $personaObj->getPersonas();
+        }
+
         return $personas;
     }
 

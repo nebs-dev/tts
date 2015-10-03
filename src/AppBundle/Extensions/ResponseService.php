@@ -59,7 +59,7 @@ class ResponseService {
      * Internal Server Error
      * @return JsonResponse
      */
-    public function internalServerError($message = 'Internal Server Error') {
-        return new JSonResponse(array('status' => 'ERROR', 'code' => 500,'message' => $message),200);
+    public function internalServerError($message = 'Internal Server Error', $errors = null) {
+        return new JSonResponse(array('status' => 'ERROR', 'code' => 500,'message' => $message,'data' => $errors),200);
     }
 }

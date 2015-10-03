@@ -2,15 +2,20 @@
 
 namespace AppBundle\Extensions;
 
+use AppBundle\Entity\Facebook;
+use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class UserService {
 
     private $em;
     private $userRepo;
+    private $container;
 
-    function __construct(EntityManager $em) {
+    function __construct(EntityManager $em, ContainerInterface $container) {
         $this->em = $em;
+        $this->container = $container;
         $this->userRepo = $this->em->getRepository('AppBundle:User');
     }
 
@@ -35,12 +40,55 @@ class UserService {
      * @param $request
      * @return bool
      */
-    public function loginFacebook($request) {
-        if($user = $this->userRepo->findOneByFacebookId($request->request->get('facebookId'))) {
-            return $user;
-        }
+    public function loginFacebook($request, $fb) {
+        $fb->setDefaultAccessToken($request->request->get('accessToken'));
 
-        return false;
+        try {
+            $response = $fb->get('/me?fields=id,name,picture,email');
+            $userNode = $response->getGraphUser();
+
+            $photo = $userNode->getPicture()['url'];
+            $email = $userNode->getField('email');
+            $facebookId = $userNode->getID();
+            $platform = $request->request->get('platform');
+
+            // If user exists
+            if($facebook = $this->em->getRepository('AppBundle:Facebook')->findOneByFacebookId($facebookId)) {
+                $user = $facebook->getUser();
+                $user->setPhoto($photo);
+                $this->em->persist($user);
+                $this->em->flush();
+
+                return $user;
+
+            // New facebook user
+            } else {
+                $user = new User();
+                $user->setPlatform($platform);
+                $user->setPhoto($photo);
+                $this->em->persist($user);
+                $this->em->flush();
+
+                $facebook = new Facebook();
+                $facebook->setPhoto($photo);
+                $facebook->setEmail($email);
+                $facebook->setFacebookId($facebookId);
+                $facebook->setUser($user);
+                $this->em->persist($facebook);
+                $this->em->flush();
+
+                $user->setFacebook($facebook);
+                $this->em->persist($user);
+                $this->em->flush();
+
+                return $user;
+            }
+
+        } catch(\FacebookResponseException $e) {
+            return false;
+        } catch(\FacebookSDKException $e) {
+            return false;
+        }
     }
 
     /**
@@ -49,10 +97,6 @@ class UserService {
      * @return bool
      */
     public function loginTwitter($request) {
-        if($user = $this->userRepo->findOneByTwitterId($request->request->get('twitterId'))) {
-            return $user;
-        }
-
         return false;
     }
 
@@ -68,8 +112,6 @@ class UserService {
         $password = $request->request->get('password');
         $photo = $request->request->get('photo');
         $platform = json_decode($request->request->get('platform'));
-        $facebookId = $request->request->get('facebookId');
-        $twitterId = $request->request->get('twitterId');
 
         $token = $request->request->get('token');
         if(is_null($user->getToken()) && is_null($token)) {
@@ -88,12 +130,6 @@ class UserService {
             $user->setPhoto($photo);
         if($platform)
             $user->setPlatform($platform);
-//        if($token)
-//            $user->setToken($token);
-        if($facebookId)
-            $user->setFacebookId($facebookId);
-        if($twitterId)
-            $user->setTwitterId($twitterId);
 
         return $user;
     }

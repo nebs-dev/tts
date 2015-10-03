@@ -13,7 +13,7 @@ AppBundle\Entity\User:
             expose: true
         platform:
             expose: true
-        facebookId:
+        facebook:
             expose: true
-        twitterId:
+        twitter:
             expose: true

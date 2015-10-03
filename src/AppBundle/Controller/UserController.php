@@ -105,11 +105,12 @@ class UserController extends FOSRestController {
         $myID = '100003197765742';
 
         try {
+//            $fb->delete('/100003197765742/permissions');
             $response = $fb->get('/100003197765742?fields=id,name,picture,email');
             $userNode = $response->getGraphUser();
 
             echo'<pre>';
-            exit(\Doctrine\Common\Util\Debug::dump($userNode->getPicture()['url']));
+            exit(\Doctrine\Common\Util\Debug::dump($userNode));
             echo'</pre>';
 
         } catch(\FacebookResponseException $e) {
@@ -129,10 +130,16 @@ class UserController extends FOSRestController {
      * @Post("/facebook/signin")
      */
     public function postFacebookSigninAction(Request $request) {
-        if(!$request->request->get('facebookId'))
+        if(!$request->request->get('accessToken') || !$request->request->get('platform'))
             return $this->get('responseService')->badRequest();
 
-        if($user = $this->get('userService')->loginFacebook($request)) {
+        $fb = new Facebook([
+            'app_id' => '416061541919312',
+            'app_secret' => 'e6e4a0ac76a00566393be42f5fd05cc6',
+            'default_graph_version' => 'v2.2'
+        ]);
+
+        if($user = $this->get('userService')->loginFacebook($request, $fb)) {
             return $this->get('responseService')->success($user);
         }
 

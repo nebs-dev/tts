@@ -60,4 +60,26 @@ class PlaceGallery {
     public function getImage() {
         return $this->image;
     }
+
+    /**
+     * Set place
+     *
+     * @param \AppBundle\Entity\Place $place
+     *
+     * @return PlaceGallery
+     */
+    public function setPlace(\AppBundle\Entity\Place $place = null) {
+        $this->place = $place;
+
+        return $this;
+    }
+
+    /**
+     * Get place
+     *
+     * @return \AppBundle\Entity\Place
+     */
+    public function getPlace() {
+        return $this->place;
+    }
 }
