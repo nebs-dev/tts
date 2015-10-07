@@ -70,7 +70,8 @@ class User {
      * @ORM\PrePersist
      */
     public function encryptPassword() {
-        $this->password = password_hash($this->password, PASSWORD_BCRYPT, array('cost' => 12));
+        if(!is_null($this->password))
+            $this->password = password_hash($this->password, PASSWORD_BCRYPT, array('cost' => 12));
     }
 
 

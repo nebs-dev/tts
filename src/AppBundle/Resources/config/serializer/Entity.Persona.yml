@@ -1,0 +1,15 @@
+AppBundle\Entity\Persona:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+        name:
+            expose: true
+        occupation:
+            expose: true
+        description:
+            expose: true
+        wikipedia:
+            expose: true
+        gallery:
+            expose: true

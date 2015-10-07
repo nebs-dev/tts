@@ -78,18 +78,18 @@ class PersonaController extends FOSRestController {
     }
 
     /**
-     * @Get("/get/{lat}/{lng}/{radius}", name="get_personas_1")
-     * @Get("/get/{token}/{lat}/{lng}/{radius}", name="get_personas_2")
+     * @Get("/get", name="get_personas_1")
+     * @Get("/get/{token}", name="get_personas_2")
      * @param null $token
-     * @param $lang
-     * @param $lat
      */
-    public function getPersonasAction($token = null, $lat, $lng, $radius) {
+    public function getPersonasAction($token = null) {
         if(!$this->get('permissionService')->checkToken($token))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
-        // find personas by lat && lng
-        $personas = $this->get('personaService')->findPersonasRadius($lat, $lng, $radius);
+        // Find all personas
+        $em = $this->getDoctrine()->getManager();
+        $personas = $em->getRepository('AppBundle:Persona')->findAll();
+
         return $this->get('responseService')->success($personas);
     }
 
@@ -111,6 +111,7 @@ class PersonaController extends FOSRestController {
         $personas = $em->getRepository('AppBundle:Persona')->search($term);
         return $this->get('responseService')->success($personas);
     }
+
 
     /**
      * @Post("/images/{personaId}", name="post_persona_image")

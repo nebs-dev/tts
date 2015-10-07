@@ -24,7 +24,7 @@ class PermissionService {
                     return true;
             }
         } else {
-            if (count($this->em->getRepository('AppBundle:User')->findOneByToken($request)) > 0)
+            if (count($this->em->getRepository('AppBundle:User')->findOneByToken($request)) > 0 && !is_null($request))
                 return true;
         }
 

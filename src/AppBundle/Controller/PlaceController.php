@@ -80,18 +80,20 @@ class PlaceController extends FOSRestController {
 
 
     /**
-     * @Get("/get/{lat}/{lng}/{radius}", name="get_places_1")
-     * @Get("/get/{token}/{lat}/{lng}/{radius}", name="get_places_2")
+     * @Get("/get", name="get_places_1")
+     * @Get("/get/{token}", name="get_places_2")
      * @param null $token
      * @param $lang
      * @param $lat
      */
-    public function getPlacesAction($token = null, $lat, $lng, $radius) {
+    public function getPlacesAction($token = null) {
         if(!$this->get('permissionService')->checkToken($token))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
-        // find places by lat && lng
-        $places = $this->get('placeService')->findPlacesRadius($lat, $lng, $radius);
+        // Find all places
+        $em = $this->getDoctrine()->getManager();
+        $places = $em->getRepository('AppBundle:Place')->findAll();
+
         return $this->get('responseService')->success($places);
     }
 

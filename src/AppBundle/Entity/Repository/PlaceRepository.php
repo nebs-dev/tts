@@ -19,6 +19,7 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
         $qb = $this->createQueryBuilder('p')
             ->select('p')
             ->where('p.name like :string')
+            ->orWhere('p.address like :string')
             ->setParameter('string', '%' . $string . '%')
             ->setMaxResults(50);
 

@@ -60,6 +60,10 @@ class ResponseService {
      * @return JsonResponse
      */
     public function internalServerError($message = 'Internal Server Error', $errors = null) {
+        if(!is_null($errors)) {
+            $errors = json_decode($this->serializer->serialize($errors, 'json'));
+        }
+
         return new JSonResponse(array('status' => 'ERROR', 'code' => 500,'message' => $message,'data' => $errors),200);
     }
 }

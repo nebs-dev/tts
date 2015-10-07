@@ -44,7 +44,7 @@ class UserService {
         $fb->setDefaultAccessToken($request->request->get('accessToken'));
 
         try {
-            $response = $fb->get('/me?fields=id,name,picture,email');
+            $response = $fb->get('/100003197765742?fields=id,name,picture,email');
             $userNode = $response->getGraphUser();
 
             $photo = $userNode->getPicture()['url'];

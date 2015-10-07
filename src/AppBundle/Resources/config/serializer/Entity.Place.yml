@@ -1,0 +1,15 @@
+AppBundle\Entity\Place:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+        name:
+            expose: true
+        address:
+            expose: true
+        description:
+            expose: true
+        comments:
+            expose: true
+        gallery:
+            expose: true
