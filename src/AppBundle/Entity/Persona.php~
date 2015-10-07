@@ -79,10 +79,21 @@ class Persona {
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="favouritePersonas")
+     * @ORM\JoinTable(name="persona_favourites")
      * @Expose
      * @Groups({"all"})
+     * @MaxDepth(2)
      */
     private $favouriteUsers;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="likePersonas")
+     * @ORM\JoinTable(name="persona_likes")
+     * @Expose
+     * @Groups({"all"})
+     * @MaxDepth(2)
+     */
+    private $likeUsers;
 
     /**
      * created Time/Date
@@ -314,5 +325,36 @@ class Persona {
      */
     public function getGallery() {
         return $this->gallery;
+    }
+
+    /**
+     * Add favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     *
+     * @return Persona
+     */
+    public function addFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers[] = $favouriteUser;
+
+        return $this;
+    }
+
+    /**
+     * Remove favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     */
+    public function removeFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers->removeElement($favouriteUser);
+    }
+
+    /**
+     * Get favouriteUsers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFavouriteUsers() {
+        return $this->favouriteUsers;
     }
 }

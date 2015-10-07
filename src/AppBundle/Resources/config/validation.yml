@@ -12,9 +12,9 @@ AppBundle\Entity\User:
     properties:
 #        name:
 #            - NotBlank:
-#        email:
+        email:
 #            - NotBlank:
-#            - Email:
+            - Email:
 #        password:
 #            - NotBlank:
         platform:

@@ -169,4 +169,39 @@ class PlaceController extends FOSRestController {
         }
     }
 
+    /**
+     * @Post("/favourite/{placeId}", name="post_place_favourite")
+     * @param Request $request
+     */
+    public function postFavouriteAction(Request $request, $placeId) {
+        if(!$this->get('permissionService')->checkToken($request))
+            return $this->get('responseService')->accessDenied('INVALID_TOKEN');
+
+        $em = $this->getDoctrine()->getManager();
+
+        try {
+            $place = $em->getRepository('AppBundle:Place')->find($placeId);
+            $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+            if(!$user || !$place) return $this->get('responseService')->notFound();
+
+            // if relationship doesn't exist
+            if(!$place->getFavouriteUsers()->contains($user)) {
+                $place->addFavouriteUser($user);
+                $em->persist($place);
+                $em->flush();
+
+                return $this->get('responseService')->success($place);
+            } else {
+                $message = array(
+                    'message' => 'Relationship already exist'
+                );
+                return $this->get('responseService')->internalServerError('Internal Server Error', array($message));
+            }
+
+        } catch(\ExportException $e) {
+            return $this->get('responseService')->internalServerError($e->getMessage());
+        }
+    }
+
 }

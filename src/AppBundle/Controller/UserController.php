@@ -31,6 +31,9 @@ class UserController extends FOSRestController {
      * @Post("/signup")
      */
     public function postSignupAction(Request $request) {
+        if(!$this->get('permissionService')->checkSignUp($request))
+            return $this->get('responseService')->badRequest();
+
         $user = $this->get('userService')->populateObject($request, new User());
         $validator = $this->get('validator');
         $errors = $validator->validate($user);

@@ -81,6 +81,7 @@ class Place {
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="favouritePlaces")
+     * @ORM\JoinTable(name="place_favourites")
      * @Expose
      * @Groups({"all"})
      * @MaxDepth(5)

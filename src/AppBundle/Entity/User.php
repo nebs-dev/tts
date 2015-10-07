@@ -67,13 +67,21 @@ class User {
 
     /**
      * @ORM\ManyToMany(targetEntity="Place", mappedBy="favouriteUsers", cascade={"all"})
+     * @ORM\JoinTable(name="place_favourites")
      */
     private $favouritePlaces;
 
     /**
      * @ORM\ManyToMany(targetEntity="Persona", mappedBy="favouriteUsers", cascade={"all"})
+     * @ORM\JoinTable(name="persona_favourites")
      */
     private $favouritePersonas;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Persona", mappedBy="likeUsers", cascade={"all"})
+     * @ORM\JoinTable(name="persona_likes")
+     */
+    private $likePersonas;
 
 
     /**
@@ -349,5 +357,39 @@ class User {
     public function getFavouritePersonas()
     {
         return $this->favouritePersonas;
+    }
+
+    /**
+     * Add likePersona
+     *
+     * @param \AppBundle\Entity\Persona $likePersona
+     *
+     * @return User
+     */
+    public function addLikePersona(\AppBundle\Entity\Persona $likePersona)
+    {
+        $this->likePersonas[] = $likePersona;
+
+        return $this;
+    }
+
+    /**
+     * Remove likePersona
+     *
+     * @param \AppBundle\Entity\Persona $likePersona
+     */
+    public function removeLikePersona(\AppBundle\Entity\Persona $likePersona)
+    {
+        $this->likePersonas->removeElement($likePersona);
+    }
+
+    /**
+     * Get likePersonas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getLikePersonas()
+    {
+        return $this->likePersonas;
     }
 }

@@ -60,6 +60,7 @@ class Place {
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="place", cascade={"all"})
      * @Expose
      * @Groups({"all"})
+     * @MaxDepth(2)
      */
     private $comments;
 
@@ -74,14 +75,16 @@ class Place {
      * @ORM\OneToMany(targetEntity="PlaceGallery", mappedBy="place", cascade={"all"})
      * @Expose
      * @Groups({"all"})
+     * @MaxDepth(2)
      */
     private $gallery;
 
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="favouritePlaces")
+     * @ORM\JoinTable(name="place_favourites")
      * @Expose
      * @Groups({"all"})
-     * @MaxDepth(3)
+     * @MaxDepth(5)
      */
     private $favouriteUsers;
 
@@ -93,7 +96,6 @@ class Place {
      * @Groups({"all"})
      */
     private $createdAt;
-
 
 
     /**
@@ -326,5 +328,36 @@ class Place {
      */
     public function getGallery() {
         return $this->gallery;
+    }
+
+    /**
+     * Add favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     *
+     * @return Place
+     */
+    public function addFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers[] = $favouriteUser;
+
+        return $this;
+    }
+
+    /**
+     * Remove favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     */
+    public function removeFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers->removeElement($favouriteUser);
+    }
+
+    /**
+     * Get favouriteUsers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFavouriteUsers() {
+        return $this->favouriteUsers;
     }
 }

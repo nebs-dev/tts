@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Put;
+use stdClass;
 
 class PersonaController extends FOSRestController {
 
@@ -139,6 +140,74 @@ class PersonaController extends FOSRestController {
             return $this->get('responseService')->success($personaImage);
         } else {
             return $this->get('responseService')->internalServerError();
+        }
+    }
+
+
+    /**
+     * @Post("/favourite/{personaId}", name="post_persona_favourite")
+     */
+    public function postFavouriteAction(Request $request, $personaId) {
+        if(!$this->get('permissionService')->checkToken($request))
+            return $this->get('responseService')->accessDenied('INVALID_TOKEN');
+
+        $em = $this->getDoctrine()->getManager();
+
+        try {
+            $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
+            $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+            if(!$user || !$persona) return $this->get('responseService')->notFound();
+
+            if(!$persona->getFavouriteUsers()->contains($user)) {
+                $persona->addFavouriteUser($user);
+                $em->persist($persona);
+                $em->flush();
+
+                return $this->get('responseService')->success($persona);
+            } else {
+                $message = array(
+                    'message' => 'Relationship already exist'
+                );
+                return $this->get('responseService')->internalServerError('Internal Server Error', $message);
+            }
+
+        } catch(\ExportException $e) {
+            return $this->get('responseService')->internalServerError($e->getMessage());
+        }
+    }
+
+    /**
+     * @Post("/like/{personaId}", name="post_persona_like")
+     */
+    public function postLikeAction(Request $request, $personaId) {
+        if(!$this->get('permissionService')->checkToken($request))
+            return $this->get('responseService')->accessDenied('INVALID_TOKEN');
+
+        $em = $this->getDoctrine()->getManager();
+
+        try {
+            $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
+            $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+            if(!$user || !$persona) return $this->get('responseService')->notFound();
+
+            // if relationship doesn't exist
+            if(!$persona->getLikeUsers()->contains($user)) {
+                $persona->addLikeUser($user);
+                $em->persist($persona);
+                $em->flush();
+
+                return $this->get('responseService')->success($persona);
+            } else {
+                $message = array(
+                    'message' => 'Relationship already exist'
+                );
+                return $this->get('responseService')->internalServerError('Internal Server Error', array($message));
+            }
+
+        } catch(\ExportException $e) {
+            return $this->get('responseService')->internalServerError($e->getMessage());
         }
     }
     
