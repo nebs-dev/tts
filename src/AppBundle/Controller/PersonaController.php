@@ -88,9 +88,9 @@ class PersonaController extends FOSRestController {
 
         // Find all personas
         $em = $this->getDoctrine()->getManager();
-        $personas = $em->getRepository('AppBundle:Persona')->findAll();
+        $personas = $em->getRepository('AppBundle:Persona')->findBy(array(), array('createdAt' => 'DESC'));
 
-        return $this->get('responseService')->success($personas);
+        return $this->get('responseService')->success($personas, false);
     }
 
 
@@ -109,7 +109,7 @@ class PersonaController extends FOSRestController {
 
         // find personas by search term
         $personas = $em->getRepository('AppBundle:Persona')->search($term);
-        return $this->get('responseService')->success($personas);
+        return $this->get('responseService')->success($personas, false);
     }
 
 

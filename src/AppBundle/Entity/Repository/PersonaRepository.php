@@ -26,4 +26,15 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
         return $qb->getQuery()->getResult();
     }
 
+
+    /**
+     * @return array
+     */
+    public function getAll() {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p');
+
+        return $qb->getQuery()->getResult();
+    }
+
 }

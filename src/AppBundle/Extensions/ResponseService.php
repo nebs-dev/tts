@@ -3,6 +3,7 @@
 namespace AppBundle\Extensions;
 
 use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use stdClass;
 
@@ -40,10 +41,16 @@ class ResponseService {
      * @param $data
      * @return JsonResponse
      */
-    public function success($data = null) {
+    public function success($data = null, $single = true) {
         $data = (is_null($data)) ? new stdClass() : $data;
 
-        $json = json_decode($this->serializer->serialize($data, 'json'));
+        // On single return related entities
+        if($single) {
+            $json = json_decode($this->serializer->serialize($data, 'json', SerializationContext::create()->enableMaxDepthChecks()));
+        } else {
+            $json = json_decode($this->serializer->serialize($data, 'json', SerializationContext::create()->setGroups(array('all'))));
+        }
+
         return new JSonResponse(array('status' => 'OK', 'code' => 200,'message' => 'OK','data' => $json),200);
     }
 

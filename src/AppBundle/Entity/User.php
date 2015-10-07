@@ -65,6 +65,16 @@ class User {
      */
     private $twitter;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="Place", mappedBy="favouriteUsers", cascade={"all"})
+     */
+    private $favouritePlaces;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Persona", mappedBy="favouriteUsers", cascade={"all"})
+     */
+    private $favouritePersonas;
+
 
     /**
      * @ORM\PrePersist
@@ -271,5 +281,73 @@ class User {
      */
     public function getTwitter() {
         return $this->twitter;
+    }
+
+    /**
+     * Add favouritePlace
+     *
+     * @param \AppBundle\Entity\Place $favouritePlace
+     *
+     * @return User
+     */
+    public function addFavouritePlace(\AppBundle\Entity\Place $favouritePlace)
+    {
+        $this->favouritePlaces[] = $favouritePlace;
+
+        return $this;
+    }
+
+    /**
+     * Remove favouritePlace
+     *
+     * @param \AppBundle\Entity\Place $favouritePlace
+     */
+    public function removeFavouritePlace(\AppBundle\Entity\Place $favouritePlace)
+    {
+        $this->favouritePlaces->removeElement($favouritePlace);
+    }
+
+    /**
+     * Get favouritePlaces
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFavouritePlaces()
+    {
+        return $this->favouritePlaces;
+    }
+
+    /**
+     * Add favouritePersona
+     *
+     * @param \AppBundle\Entity\Persona $favouritePersona
+     *
+     * @return User
+     */
+    public function addFavouritePersona(\AppBundle\Entity\Persona $favouritePersona)
+    {
+        $this->favouritePersonas[] = $favouritePersona;
+
+        return $this;
+    }
+
+    /**
+     * Remove favouritePersona
+     *
+     * @param \AppBundle\Entity\Persona $favouritePersona
+     */
+    public function removeFavouritePersona(\AppBundle\Entity\Persona $favouritePersona)
+    {
+        $this->favouritePersonas->removeElement($favouritePersona);
+    }
+
+    /**
+     * Get favouritePersonas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFavouritePersonas()
+    {
+        return $this->favouritePersonas;
     }
 }

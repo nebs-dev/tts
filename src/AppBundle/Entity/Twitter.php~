@@ -112,4 +112,26 @@ class Twitter {
     public function getPhoto() {
         return $this->photo;
     }
+
+    /**
+     * Set twitterId
+     *
+     * @param string $twitterId
+     *
+     * @return Twitter
+     */
+    public function setTwitterId($twitterId) {
+        $this->twitterId = $twitterId;
+
+        return $this;
+    }
+
+    /**
+     * Get twitterId
+     *
+     * @return string
+     */
+    public function getTwitterId() {
+        return $this->twitterId;
+    }
 }

@@ -3,37 +3,53 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * User
  * @ORM\Table(name="personas")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\PersonaRepository")
+ * @ExclusionPolicy("all")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Persona {
     /**
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Expose
+     * @Groups({"all"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Expose
+     * @Groups({"all"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Expose
+     * @Groups({"all"})
      */
     private $occupation;
 
     /**
      * @ORM\Column(type="text")
+     * @Expose
+     * @Groups({"all"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Expose
+     * @Groups({"all"})
      */
     private $wikipedia;
 
@@ -49,13 +65,34 @@ class Persona {
 
     /**
      * @ORM\ManyToMany(targetEntity="Place", inversedBy="personas")
+     * @Expose
+     * @MaxDepth(2)
      */
     private $places;
 
     /**
      * @ORM\OneToMany(targetEntity="PersonaGallery", mappedBy="persona", cascade={"all"})
+     * @Expose
+     * @Groups({"all"})
      */
     private $gallery;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="favouritePersonas")
+     * @Expose
+     * @Groups({"all"})
+     * @MaxDepth(2)
+     */
+    private $favouriteUsers;
+
+    /**
+     * created Time/Date
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=false)
+     * @Expose
+     * @Groups({"all"})
+     */
+    private $createdAt;
 
 
     /**
@@ -65,6 +102,18 @@ class Persona {
      */
     public function getId() {
         return $this->id;
+    }
+
+    /**
+     * Set createdAt
+     * @ORM\PrePersist
+     */
+    public function setCreatedAt() {
+        $this->createdAt = new \DateTime();
+    }
+
+    public function getCreatedAt() {
+        return $this->createdAt;
     }
 
     /**
@@ -193,7 +242,6 @@ class Persona {
         return $this->places;
     }
 
-
     /**
      * Set lng
      *
@@ -267,5 +315,36 @@ class Persona {
      */
     public function getGallery() {
         return $this->gallery;
+    }
+
+    /**
+     * Add favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     *
+     * @return Persona
+     */
+    public function addFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers[] = $favouriteUser;
+
+        return $this;
+    }
+
+    /**
+     * Remove favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     */
+    public function removeFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers->removeElement($favouriteUser);
+    }
+
+    /**
+     * Get favouriteUsers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFavouriteUsers() {
+        return $this->favouriteUsers;
     }
 }

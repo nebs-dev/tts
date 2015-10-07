@@ -83,18 +83,16 @@ class PlaceController extends FOSRestController {
      * @Get("/get", name="get_places_1")
      * @Get("/get/{token}", name="get_places_2")
      * @param null $token
-     * @param $lang
-     * @param $lat
      */
     public function getPlacesAction($token = null) {
         if(!$this->get('permissionService')->checkToken($token))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
-        // Find all places
+        // Get all places
         $em = $this->getDoctrine()->getManager();
-        $places = $em->getRepository('AppBundle:Place')->findAll();
+        $places = $em->getRepository('AppBundle:Place')->findBy(array(), array('createdAt' => 'DESC'));
 
-        return $this->get('responseService')->success($places);
+        return $this->get('responseService')->success($places, false);
     }
 
 
@@ -113,7 +111,7 @@ class PlaceController extends FOSRestController {
 
         // find places by search term
         $places = $em->getRepository('AppBundle:Place')->search($term);
-        return $this->get('responseService')->success($places);
+        return $this->get('responseService')->success($places, false);
     }
 
 

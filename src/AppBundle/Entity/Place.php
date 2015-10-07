@@ -3,32 +3,46 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * User
  * @ORM\Table(name="places")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\PlaceRepository")
+ * @ExclusionPolicy("all")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Place {
     /**
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Expose
+     * @Groups({"all"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Expose
+     * @Groups({"all"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
+     * @Expose
+     * @Groups({"all"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Expose
+     * @Groups({"all"})
      */
     private $address;
 
@@ -44,18 +58,44 @@ class Place {
 
     /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="place", cascade={"all"})
+     * @Expose
+     * @Groups({"all"})
+     * @MaxDepth(2)
      */
     private $comments;
 
     /**
      * @ORM\ManyToMany(targetEntity="Persona", mappedBy="places")
+     * @Expose
+     * @MaxDepth(2)
      */
     private $personas;
 
     /**
      * @ORM\OneToMany(targetEntity="PlaceGallery", mappedBy="place", cascade={"all"})
+     * @Expose
+     * @Groups({"all"})
+     * @MaxDepth(2)
      */
     private $gallery;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="favouritePlaces")
+     * @Expose
+     * @Groups({"all"})
+     * @MaxDepth(5)
+     */
+    private $favouriteUsers;
+
+    /**
+     * created Time/Date
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=false)
+     * @Expose
+     * @Groups({"all"})
+     */
+    private $createdAt;
+
 
     /**
      * Get id
@@ -64,6 +104,18 @@ class Place {
      */
     public function getId() {
         return $this->id;
+    }
+
+    /**
+     * Set createdAt
+     * @ORM\PrePersist
+     */
+    public function setCreatedAt() {
+        $this->createdAt = new \DateTime();
+    }
+
+    public function getCreatedAt() {
+        return $this->createdAt;
     }
 
     /**
@@ -275,5 +327,36 @@ class Place {
      */
     public function getGallery() {
         return $this->gallery;
+    }
+
+    /**
+     * Add favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     *
+     * @return Place
+     */
+    public function addFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers[] = $favouriteUser;
+
+        return $this;
+    }
+
+    /**
+     * Remove favouriteUser
+     *
+     * @param \AppBundle\Entity\User $favouriteUser
+     */
+    public function removeFavouriteUser(\AppBundle\Entity\User $favouriteUser) {
+        $this->favouriteUsers->removeElement($favouriteUser);
+    }
+
+    /**
+     * Get favouriteUsers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getFavouriteUsers() {
+        return $this->favouriteUsers;
     }
 }

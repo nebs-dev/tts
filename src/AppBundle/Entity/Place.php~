@@ -3,32 +3,46 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\MaxDepth;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\Groups;
 
 /**
  * User
  * @ORM\Table(name="places")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\Repository\PlaceRepository")
+ * @ExclusionPolicy("all")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Place {
     /**
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Expose
+     * @Groups({"all"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Expose
+     * @Groups({"all"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
+     * @Expose
+     * @Groups({"all"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=100)
+     * @Expose
+     * @Groups({"all"})
      */
     private $address;
 
@@ -44,18 +58,43 @@ class Place {
 
     /**
      * @ORM\OneToMany(targetEntity="Comment", mappedBy="place", cascade={"all"})
+     * @Expose
+     * @Groups({"all"})
      */
     private $comments;
 
     /**
      * @ORM\ManyToMany(targetEntity="Persona", mappedBy="places")
+     * @Expose
+     * @MaxDepth(2)
      */
     private $personas;
 
     /**
      * @ORM\OneToMany(targetEntity="PlaceGallery", mappedBy="place", cascade={"all"})
+     * @Expose
+     * @Groups({"all"})
      */
     private $gallery;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="favouritePlaces")
+     * @Expose
+     * @Groups({"all"})
+     * @MaxDepth(3)
+     */
+    private $favouriteUsers;
+
+    /**
+     * created Time/Date
+     * @var \DateTime
+     * @ORM\Column(type="datetime", nullable=false)
+     * @Expose
+     * @Groups({"all"})
+     */
+    private $createdAt;
+
+
 
     /**
      * Get id
@@ -64,6 +103,18 @@ class Place {
      */
     public function getId() {
         return $this->id;
+    }
+
+    /**
+     * Set createdAt
+     * @ORM\PrePersist
+     */
+    public function setCreatedAt() {
+        $this->createdAt = new \DateTime();
+    }
+
+    public function getCreatedAt() {
+        return $this->createdAt;
     }
 
     /**
