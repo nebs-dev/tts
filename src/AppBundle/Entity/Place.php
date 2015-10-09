@@ -48,11 +48,15 @@ class Place {
 
     /**
      * @ORM\Column(type="float", precision=20, scale=18)
+     * @Expose
+     * @Groups({"all"})
      */
     private $lat;
 
     /**
      * @ORM\Column(type="float", precision=20, scale=18)
+     * @Expose
+     * @Groups({"all"})
      */
     private $lng;
 

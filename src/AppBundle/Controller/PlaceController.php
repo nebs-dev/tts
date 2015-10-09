@@ -30,6 +30,7 @@ class PlaceController extends FOSRestController {
     }
 
     /**
+     * Create new Place
      * @Post("/")
      */
     public function postPlaceAction(Request $request) {
@@ -44,14 +45,32 @@ class PlaceController extends FOSRestController {
         if (count($errors) > 0) {
             return $this->get('responseService')->badRequest($errors);
         } else {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($place);
-            $em->flush();
-            return $this->get('responseService')->success($place);
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($place);
+                $em->flush();
+
+                // Related personas
+                $relatedPersonas = $request->request->get('personas');
+                $relatedPersonas = explode(",", $relatedPersonas);
+                if (count($relatedPersonas) > 0) {
+                    foreach ($relatedPersonas as $personaId) {
+                        $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
+                        $persona->addPlace($place);
+                        $em->persist($persona);
+                        $em->flush();
+                    }
+                }
+                return $this->get('responseService')->success($place);
+
+            } catch(\ExportException $e) {
+                return $this->get('responseService')->internalServerError('Internal Server Error', array($e->getMessage()));
+            }
         }
     }
 
     /**
+     * Update Place
      * @Put("/{placeId}")
      */
     public function putPlaceAction(Request $request, $placeId) {

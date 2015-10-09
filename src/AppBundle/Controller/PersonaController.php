@@ -30,6 +30,7 @@ class PersonaController extends FOSRestController {
     }
 
     /**
+     * Create Persona
      * @Post("/")
      */
     public function postPersonaAction(Request $request) {
@@ -44,14 +45,32 @@ class PersonaController extends FOSRestController {
         if (count($errors) > 0) {
             return $this->get('responseService')->badRequest($errors);
         } else {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($persona);
-            $em->flush();
-            return $this->get('responseService')->success($persona);
+            try {
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($persona);
+                $em->flush();
+
+                // Related places
+                $relatedPlaces = $request->request->get('places');
+                $relatedPlaces = explode(",", $relatedPlaces);
+                if (count($relatedPlaces) > 0) {
+                    foreach ($relatedPlaces as $placeId) {
+                        $place = $em->getRepository('AppBundle:Place')->find($placeId);
+                        $place->addPersona($persona);
+                        $em->persist($place);
+                        $em->flush();
+                    }
+                }
+                return $this->get('responseService')->success($persona);
+
+            } catch(\ExportException $e) {
+                return $this->get('responseService')->internalServerError('Internal Server Error', array($e->getMessage()));
+            }
         }
     }
 
     /**
+     * Update Persona
      * @Put("/{personaId}")
      */
     public function putPersonaAction(Request $request, $personaId) {

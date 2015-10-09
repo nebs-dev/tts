@@ -32,14 +32,18 @@ class PermissionService {
         return false;
     }
 
-
+    /**
+     * Checks if all data for signup are in request
+     * @param $request
+     * @return bool
+     */
     public function checkSignUp($request) {
         if(isset($request->request)) {
             $email = $request->request->get('email');
             $password = $request->request->get('password');
-            $name = $request->request->get('name');
+            $platform = $request->request->get('platform');
 
-            if(isset($email) && isset($password) && isset($name)) {
+            if(isset($email) && isset($password) && isset($platform)) {
                 return true;
             }
         }
