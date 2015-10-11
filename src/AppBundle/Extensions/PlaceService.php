@@ -61,7 +61,7 @@ class PlaceService {
                 * sin( radians( lat ) )
             )
         ) AS distance
-        FROM places
+        FROM places p
         HAVING distance < :radius
         ORDER BY distance
         LIMIT 0 , 20;";
