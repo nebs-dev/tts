@@ -84,9 +84,7 @@ class User {
     private $likePersonas;
 
 
-    /**
-     * @ORM\PrePersist
-     */
+
     public function encryptPassword() {
         if(!is_null($this->password))
             $this->password = password_hash($this->password, PASSWORD_BCRYPT, array('cost' => 12));

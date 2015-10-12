@@ -69,7 +69,7 @@ class UserController extends FOSRestController {
         $em = $this->getDoctrine()->getManager();
 
         // check token
-        $token = $request->get('token');
+        $token = $request->request->get('token');
         if(!isset($token)) return $this->get('responseService')->badRequest();
 
         // find user by token
@@ -85,7 +85,7 @@ class UserController extends FOSRestController {
             return $this->get('responseService')->badRequest($errors);
         } else {
             $em = $this->getDoctrine()->getManager();
-            $user->encryptPassword();
+//            $user->encryptPassword();
             $em->persist($user);
             $em->flush();
             return $this->get('responseService')->success($user);

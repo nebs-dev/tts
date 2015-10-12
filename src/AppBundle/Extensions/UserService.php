@@ -124,8 +124,10 @@ class UserService {
             $user->setName($name);
         if($email)
             $user->setEmail($email);
-        if($password)
+        if(isset($password) && $password != '') {
             $user->setPassword($password);
+            $user->encryptPassword();
+        }
         if($photo)
             $user->setPhoto($photo);
         if($platform)
