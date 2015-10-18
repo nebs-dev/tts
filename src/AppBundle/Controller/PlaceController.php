@@ -50,15 +50,17 @@ class PlaceController extends FOSRestController {
                 $em->persist($place);
                 $em->flush();
 
-                // Related personas
-                $relatedPersonas = $request->request->get('personas');
-                $relatedPersonas = explode(",", $relatedPersonas);
-                if (count($relatedPersonas) > 0) {
-                    foreach ($relatedPersonas as $personaId) {
-                        $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
-                        $persona->addPlace($place);
-                        $em->persist($persona);
-                        $em->flush();
+                if ($request->request->get('personas')) {
+                    // Related personas
+                    $relatedPersonas = $request->request->get('personas');
+                    $relatedPersonas = explode(",", $relatedPersonas);
+                    if (count($relatedPersonas) > 0) {
+                        foreach ($relatedPersonas as $personaId) {
+                            $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
+                            $persona->addPlace($place);
+                            $em->persist($persona);
+                            $em->flush();
+                        }
                     }
                 }
                 return $this->get('responseService')->success($place);

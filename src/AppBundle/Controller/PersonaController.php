@@ -51,14 +51,16 @@ class PersonaController extends FOSRestController {
                 $em->flush();
 
                 // Related places
-                $relatedPlaces = $request->request->get('places');
-                $relatedPlaces = explode(",", $relatedPlaces);
-                if (count($relatedPlaces) > 0) {
-                    foreach ($relatedPlaces as $placeId) {
-                        $place = $em->getRepository('AppBundle:Place')->find($placeId);
-                        $place->addPersona($persona);
-                        $em->persist($place);
-                        $em->flush();
+                if ($request->request->get('personas')) {
+                    $relatedPlaces = $request->request->get('places');
+                    $relatedPlaces = explode(",", $relatedPlaces);
+                    if (count($relatedPlaces) > 0) {
+                        foreach ($relatedPlaces as $placeId) {
+                            $place = $em->getRepository('AppBundle:Place')->find($placeId);
+                            $place->addPersona($persona);
+                            $em->persist($place);
+                            $em->flush();
+                        }
                     }
                 }
                 return $this->get('responseService')->success($persona);
