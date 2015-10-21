@@ -30,11 +30,29 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
     /**
      * @return array
      */
-    public function getAll() {
-        $qb = $this->createQueryBuilder('p')
-            ->select('p');
+    public function getAll($userId) {
+        $sqlFindPersonas = "SELECT p.*,
+                              CASE
+                                 WHEN f.persona_id IS NOT NULL AND f.user_id = :userId THEN true
+                                 ELSE false
+                              END as favourited,
+                              CASE
+                                 WHEN l.persona_id AND l.user_id = :userId IS NOT NULL THEN true
+                                 ELSE false
+                              END as liked,
+                              (SELECT COUNT(*) FROM persona_favourites fav WHERE fav.persona_id = f.persona_id) as totalFav,
+                              (SELECT COUNT(*) FROM persona_likes lik WHERE lik.persona_id = l.persona_id) as totalLikes
+                            FROM personas p
+                            LEFT JOIN persona_favourites f ON f.persona_id = p.id
+                            LEFT JOIN persona_likes l ON l.persona_id = p.id
+                            GROUP BY p.id
+                            ORDER BY created_at DESC";
 
-        return $qb->getQuery()->getResult();
+        $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPersonas, array(
+            'userId' => $userId
+        ))->fetchAll();
+
+        return $personas;
     }
 
 }

@@ -108,9 +108,15 @@ class PersonaController extends FOSRestController {
         if(!$this->get('permissionService')->checkToken($token))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
+        // find user by token
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->findOneByToken($token);
+        if(!$user) return $this->get('responseService')->notFound();
+
         // Find all personas
         $em = $this->getDoctrine()->getManager();
-        $personas = $em->getRepository('AppBundle:Persona')->findBy(array(), array('createdAt' => 'DESC'));
+//        $personas = $em->getRepository('AppBundle:Persona')->findBy(array(), array('createdAt' => 'DESC'));
+        $personas = $em->getRepository('AppBundle:Persona')->getAll($user->getId());
 
         return $this->get('responseService')->success($personas, false);
     }
