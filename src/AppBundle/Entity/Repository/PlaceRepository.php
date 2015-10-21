@@ -15,15 +15,71 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
      * @param $string
      * @return array
      */
-    public function search($string) {
-        $qb = $this->createQueryBuilder('p')
-            ->select('p')
-            ->where('p.name like :string')
-            ->orWhere('p.address like :string')
-            ->setParameter('string', '%' . $string . '%')
-            ->setMaxResults(50);
+    public function search($string, $userId) {
+//        $qb = $this->createQueryBuilder('p')
+//            ->select('p')
+//            ->where('p.name like :string')
+//            ->orWhere('p.address like :string')
+//            ->setParameter('string', '%' . $string . '%')
+//            ->setMaxResults(50);
+//
+//        return $qb->getQuery()->getResult();
 
-        return $qb->getQuery()->getResult();
+
+        $sqlFindPersonas = "SELECT p.*,
+                              CASE
+                                 WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
+                                 ELSE false
+                              END as favourited,
+                              (SELECT COUNT(*) FROM place_favourites fav WHERE fav.place_id = f.place_id) as totalFav
+                            FROM places p
+                            LEFT JOIN place_favourites f ON f.place_id = p.id
+                            WHERE p.name LIKE :string
+                            OR p.address LIKE :string
+                            GROUP BY p.id
+                            LIMIT 0, 50
+                            ";
+
+        $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPersonas, array(
+            'string' => '%' . $string . '%',
+            'userId' => $userId
+        ))->fetchAll();
+
+        return $personas;
+    }
+
+
+    public function getAllByLocation($lat, $lng, $radius, $userId) {
+        $sqlFindPersonas = "SELECT p.*,
+                                (
+                                    6371 * acos (
+                                        cos ( radians(:lat) )
+                                        * cos( radians( lat ) )
+                                        * cos( radians( lng ) - radians(:lng) )
+                                        + sin ( radians(:lat) )
+                                        * sin( radians( lat ) )
+                                    )
+                                ) AS distance,
+                              CASE
+                                 WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
+                                 ELSE false
+                              END as favourited,
+                              (SELECT COUNT(*) FROM place_favourites fav WHERE fav.place_id = f.place_id) as totalFav
+                            FROM places p
+                            LEFT JOIN place_favourites f ON f.place_id = p.id
+                            HAVING distance < :radius
+                            ORDER BY distance
+                            LIMIT 0, 50
+                            ";
+
+        $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPersonas, array(
+            'lat' => $lat,
+            'lng' => $lng,
+            'radius' => $radius,
+            'userId' => $userId
+        ))->fetchAll();
+
+        return $personas;
     }
 
 }

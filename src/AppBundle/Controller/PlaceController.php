@@ -109,11 +109,15 @@ class PlaceController extends FOSRestController {
         if(!$this->get('permissionService')->checkToken($token))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
-        // Get all places
-//        $em = $this->getDoctrine()->getManager();
-//        $places = $em->getRepository('AppBundle:Place')->findBy(array(), array('createdAt' => 'DESC'));
+        $em = $this->getDoctrine()->getManager();
+        // find user by token
+        $user = $em->getRepository('AppBundle:User')->findOneByToken($token);
+        if(!$user) return $this->get('responseService')->notFound();
+        // Get all places by location
+        $places = $em->getRepository('AppBundle:Place')->getAllByLocation($lat, $lng, $radius, $user->getId());
 
-        $places = $this->get('placeService')->findPlacesRadius($lat, $lng, $radius);
+//        $places = $em->getRepository('AppBundle:Place')->findBy(array(), array('createdAt' => 'DESC'));
+//        $places = $this->get('placeService')->findPlacesRadius($lat, $lng, $radius);
 
         return $this->get('responseService')->success($places, false);
     }
@@ -130,10 +134,13 @@ class PlaceController extends FOSRestController {
         if(!$this->get('permissionService')->checkToken($token))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
+        // find user by token
         $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->findOneByToken($token);
+        if(!$user) return $this->get('responseService')->notFound();
 
         // find places by search term
-        $places = $em->getRepository('AppBundle:Place')->search($term);
+        $places = $em->getRepository('AppBundle:Place')->search($term, $user->getId());
         return $this->get('responseService')->success($places, false);
     }
 

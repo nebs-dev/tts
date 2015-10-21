@@ -17,3 +17,7 @@ AppBundle\Entity\User:
             expose: true
         twitter:
             expose: true
+        favouritePlaces:
+            expose: true
+        favouritePersonas:
+            expose: true
