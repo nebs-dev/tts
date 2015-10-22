@@ -80,9 +80,6 @@ class Persona {
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="favouritePersonas")
      * @ORM\JoinTable(name="persona_favourites")
-     * @Expose
-     * @Groups({"all"})
-     * @MaxDepth(2)
      */
     private $favouriteUsers;
 
