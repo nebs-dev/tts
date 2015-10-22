@@ -26,7 +26,7 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
 //        return $qb->getQuery()->getResult();
 
 
-        $sqlFindPersonas = "SELECT p.*,
+        $sqlFindPlaces = "SELECT p.*,
                               CASE
                                  WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
                                  ELSE false
@@ -40,17 +40,18 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
                             LIMIT 0, 50
                             ";
 
-        $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPersonas, array(
+        $places = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPlaces, array(
             'string' => '%' . $string . '%',
             'userId' => $userId
         ))->fetchAll();
 
-        return $personas;
+        $places = $this->findGallery($places);
+        return $places;
     }
 
 
     public function getAllByLocation($lat, $lng, $radius, $userId) {
-        $sqlFindPersonas = "SELECT p.*,
+        $sqlFindPlaces = "SELECT p.*,
                                 (
                                     6371 * acos (
                                         cos ( radians(:lat) )
@@ -61,7 +62,7 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
                                     )
                                 ) AS distance,
                               CASE
-                                 WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
+                                 WHEN EXISTS(SELECT 1 FROM place_favourites as fff WHERE fff.user_id = :userId AND fff.place_id = p.id) THEN true
                                  ELSE false
                               END as favourited,
                               (SELECT COUNT(*) FROM place_favourites fav WHERE fav.place_id = f.place_id) as totalFav
@@ -72,14 +73,28 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
                             LIMIT 0, 50
                             ";
 
-        $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPersonas, array(
+        $places = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPlaces, array(
             'lat' => $lat,
             'lng' => $lng,
             'radius' => $radius,
             'userId' => $userId
         ))->fetchAll();
 
-        return $personas;
+        $places = $this->findGallery($places);
+        return $places;
     }
 
+
+    private function findGallery($places) {
+        foreach($places as &$place) {
+            $sqlPlaceGallery = "SELECT g.* FROM place_gallery g WHERE g.place_id = :placeId";
+            $gallery = $this->getEntityManager()->getConnection()->executeQuery($sqlPlaceGallery, array(
+                'placeId' => $place['id']
+            ))->fetchAll();
+
+            $place['gallery'] = $gallery;
+        }
+
+        return $places;
+    }
 }

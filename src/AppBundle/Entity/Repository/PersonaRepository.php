@@ -50,6 +50,7 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
             'userId' => $userId
         ))->fetchAll();
 
+        $personas = $this->findGallery($personas);
         return $personas;
     }
 
@@ -58,13 +59,13 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
      * @return array
      */
     public function getAll($userId) {
-        $sqlFindPersonas = "SELECT p.*,
+        $sqlFindPersonas = "SELECT p.*, f.persona_id AS perosona_moj_ID,
                               CASE
-                                 WHEN f.persona_id IS NOT NULL AND f.user_id = :userId THEN true
+                                 WHEN EXISTS(SELECT 1 FROM persona_favourites as fff WHERE fff.user_id = :userId AND fff.persona_id = p.id) THEN true
                                  ELSE false
                               END as favourited,
                               CASE
-                                 WHEN l.persona_id AND l.user_id = :userId IS NOT NULL THEN true
+                                 WHEN EXISTS(SELECT 1 FROM persona_likes as lll WHERE lll.user_id = :userId AND lll.persona_id = p.id) THEN true
                                  ELSE false
                               END as liked,
                               (SELECT COUNT(*) FROM persona_favourites fav WHERE fav.persona_id = f.persona_id) as totalFav,
@@ -78,6 +79,21 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
         $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlFindPersonas, array(
             'userId' => $userId
         ))->fetchAll();
+
+        $personas = $this->findGallery($personas);
+        return $personas;
+    }
+
+
+    private function findGallery($personas) {
+        foreach($personas as &$persona) {
+            $sqlPersonaGallery = "SELECT g.* FROM persona_gallery g WHERE g.persona_id = :personaId";
+            $gallery = $this->getEntityManager()->getConnection()->executeQuery($sqlPersonaGallery, array(
+                'personaId' => $persona['id']
+            ))->fetchAll();
+
+            $persona['gallery'] = $gallery;
+        }
 
         return $personas;
     }
