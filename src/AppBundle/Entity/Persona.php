@@ -86,9 +86,6 @@ class Persona {
     /**
      * @ORM\ManyToMany(targetEntity="User", inversedBy="likePersonas")
      * @ORM\JoinTable(name="persona_likes")
-     * @Expose
-     * @Groups({"all"})
-     * @MaxDepth(2)
      */
     private $likeUsers;
 
