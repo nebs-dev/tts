@@ -37,7 +37,7 @@ class UploadService {
             $random = substr( md5(rand()), 0, 7);
             $imageName = sha1('MIDGET' . $random .'NINJA');
 
-            $filePath = '/uploads/' . $imageName . '.png';
+            $filePath = 'uploads/' . $imageName . '.png';
 
             file_put_contents($basePath . $filePath, $file);
 
