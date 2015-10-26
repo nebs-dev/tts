@@ -23,9 +23,11 @@ class PersonaController extends FOSRestController {
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
         $em = $this->getDoctrine()->getManager();
+        // find user by token
+        $user = $em->getRepository('AppBundle:User')->findOneByToken($token);
 
         // find persona by ID
-        $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
+        $persona = $em->getRepository('AppBundle:Persona')->getOne($personaId, $user->getId());
         return $this->get('responseService')->success($persona);
     }
 
@@ -63,6 +65,11 @@ class PersonaController extends FOSRestController {
                         }
                     }
                 }
+
+                // find user by token
+                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+                $persona = $em->getRepository('AppBundle:Persona')->getOne($persona->getId(), $user->getId());
                 return $this->get('responseService')->success($persona);
 
             } catch(\ExportException $e) {
@@ -95,6 +102,11 @@ class PersonaController extends FOSRestController {
             $em = $this->getDoctrine()->getManager();
             $em->persist($persona);
             $em->flush();
+
+            // find user by token
+            $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+            $persona = $em->getRepository('AppBundle:Persona')->getOne($personaId, $user->getId());
             return $this->get('responseService')->success($persona);
         }
     }
@@ -194,7 +206,12 @@ class PersonaController extends FOSRestController {
                 $em->persist($persona);
                 $em->flush();
 
+                // find user by token
+                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+                $persona = $em->getRepository('AppBundle:Persona')->getOne($personaId, $user->getId());
                 return $this->get('responseService')->success($persona);
+
             } else {
                 $message = array(
                     'message' => 'Relationship already exist'
@@ -228,7 +245,12 @@ class PersonaController extends FOSRestController {
                 $em->persist($persona);
                 $em->flush();
 
+                // find user by token
+                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+                $persona = $em->getRepository('AppBundle:Persona')->getOne($personaId, $user->getId());
                 return $this->get('responseService')->success($persona);
+
             } else {
                 $message = array(
                     'message' => 'Relationship already exist'

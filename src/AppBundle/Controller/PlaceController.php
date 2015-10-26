@@ -23,9 +23,11 @@ class PlaceController extends FOSRestController {
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
         $em = $this->getDoctrine()->getManager();
+        // find user by token
+        $user = $em->getRepository('AppBundle:User')->findOneByToken($token);
 
         // find place by ID
-        $place = $em->getRepository('AppBundle:Place')->find($placeId);
+        $place = $em->getRepository('AppBundle:Place')->getOne($placeId, $user->getId());
         return $this->get('responseService')->success($place);
     }
 
@@ -63,6 +65,11 @@ class PlaceController extends FOSRestController {
                         }
                     }
                 }
+
+                // find user by token
+                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+                $place = $em->getRepository('AppBundle:Place')->getOne($place->getId(), $user->getId());
                 return $this->get('responseService')->success($place);
 
             } catch(\ExportException $e) {
@@ -95,6 +102,11 @@ class PlaceController extends FOSRestController {
             $em = $this->getDoctrine()->getManager();
             $em->persist($place);
             $em->flush();
+
+            // find user by token
+            $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+            $place = $em->getRepository('AppBundle:Place')->getOne($place->getId(), $user->getId());
             return $this->get('responseService')->success($place);
         }
     }
@@ -221,7 +233,12 @@ class PlaceController extends FOSRestController {
                 $em->persist($place);
                 $em->flush();
 
+                // find user by token
+                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
+
+                $place = $em->getRepository('AppBundle:Place')->getOne($place->getId(), $user->getId());
                 return $this->get('responseService')->success($place);
+
             } else {
                 $message = array(
                     'message' => 'Relationship already exist'

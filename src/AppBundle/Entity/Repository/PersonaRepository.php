@@ -10,6 +10,32 @@ namespace AppBundle\Entity\Repository;
  */
 class PersonaRepository extends \Doctrine\ORM\EntityRepository {
 
+    public function getOne($personaId, $userId) {
+        $sql = "SELECT p.*, UNIX_TIMESTAMP(CAST(p.created_at AS DATETIME)) as created_at_timestamp,
+                  CASE
+                     WHEN f.persona_id IS NOT NULL AND f.user_id = :userId THEN true
+                     ELSE false
+                  END as favourited,
+                  (SELECT COUNT(*) FROM persona_favourites fav WHERE fav.persona_id = f.persona_id) as totalFav,
+                  (SELECT COUNT(*) FROM persona_likes lik WHERE lik.persona_id = l.persona_id) as totalLikes
+                FROM personas p
+                LEFT JOIN persona_favourites f ON f.persona_id = p.id
+                LEFT JOIN persona_likes l ON l.persona_id = p.id
+                WHERE p.id = :personaId
+                GROUP BY p.id
+                LIMIT 0, 50
+                ";
+
+        $personas = $this->getEntityManager()->getConnection()->executeQuery($sql, array(
+            'personaId' => $personaId,
+            'userId' => $userId
+        ))->fetchAll();
+
+        $personas = $this->findGallery($personas);
+        $personas = $this->getRelatedPlaces($personas, $userId);
+        return $personas[0];
+    }
+
     /**
      * Get all personas by name
      * @param $string
@@ -51,6 +77,7 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
         ))->fetchAll();
 
         $personas = $this->findGallery($personas);
+        $personas = $this->getRelatedPlaces($personas, $userId);
         return $personas;
     }
 
@@ -81,6 +108,7 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
         ))->fetchAll();
 
         $personas = $this->findGallery($personas);
+        $personas = $this->getRelatedPlaces($personas, $userId);
         return $personas;
     }
 
@@ -93,6 +121,50 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
             ))->fetchAll();
 
             $persona['gallery'] = $gallery;
+        }
+
+        return $personas;
+    }
+
+    private function findPlaceGallery($places) {
+        foreach($places as &$place) {
+            $sqlPlaceGallery = "SELECT g.* FROM place_gallery g WHERE g.place_id = :placeId";
+            $gallery = $this->getEntityManager()->getConnection()->executeQuery($sqlPlaceGallery, array(
+                'placeId' => $place['id']
+            ))->fetchAll();
+
+            $place['gallery'] = $gallery;
+        }
+
+        return $places;
+    }
+
+    /**
+     * Related places
+     * @param $places
+     * @return mixed
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    private function getRelatedPlaces($personas, $userId) {
+        foreach($personas as &$persona) {
+            $sqlRelatedPersonas = "SELECT pla.*, UNIX_TIMESTAMP(CAST(pla.created_at AS DATETIME)) as created_at_timestamp,
+                                  CASE
+                                     WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
+                                     ELSE false
+                                  END as favourited,
+                                  (SELECT COUNT(*) FROM place_favourites fav WHERE fav.place_id = f.place_id) as totalFav
+                              FROM places pla
+                              INNER JOIN persona_place pp ON pp.place_id = pla.id
+                              INNER JOIN personas p ON pp.persona_id = p.id
+                              LEFT JOIN place_favourites f ON f.place_id = p.id
+                              WHERE p.id = :personaId";
+            $places = $this->getEntityManager()->getConnection()->executeQuery($sqlRelatedPersonas, array(
+                'personaId' => $persona['id'],
+                'userId' => $userId
+            ))->fetchAll();
+
+            $personas = $this->findPlaceGallery($personas);
+            $persona['relatedPlaces'] = $places;
         }
 
         return $personas;
