@@ -163,7 +163,7 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
                 'userId' => $userId
             ))->fetchAll();
 
-            $personas = $this->findPlaceGallery($personas);
+            $places = $this->findPlaceGallery($places);
             $persona['relatedPlaces'] = $places;
         }
 
