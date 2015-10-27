@@ -206,11 +206,7 @@ class PersonaController extends FOSRestController {
                 $em->persist($persona);
                 $em->flush();
 
-                // find user by token
-                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
-
-                $persona = $em->getRepository('AppBundle:Persona')->getOne($personaId, $user->getId());
-                return $this->get('responseService')->success($persona);
+                return $this->get('responseService')->success();
 
             } else {
                 $message = array(
@@ -245,11 +241,7 @@ class PersonaController extends FOSRestController {
                 $em->persist($persona);
                 $em->flush();
 
-                // find user by token
-                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
-
-                $persona = $em->getRepository('AppBundle:Persona')->getOne($personaId, $user->getId());
-                return $this->get('responseService')->success($persona);
+                return $this->get('responseService')->success();
 
             } else {
                 $message = array(

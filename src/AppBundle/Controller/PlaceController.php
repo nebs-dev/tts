@@ -178,7 +178,7 @@ class PlaceController extends FOSRestController {
             $em = $this->getDoctrine()->getManager();
             $em->persist($comment);
             $em->flush();
-            return $this->get('responseService')->success($comment);
+            return $this->get('responseService')->success();
         }
     }
 
@@ -233,11 +233,7 @@ class PlaceController extends FOSRestController {
                 $em->persist($place);
                 $em->flush();
 
-                // find user by token
-                $user = $em->getRepository('AppBundle:User')->findOneByToken($request->request->get('token'));
-
-                $place = $em->getRepository('AppBundle:Place')->getOne($place->getId(), $user->getId());
-                return $this->get('responseService')->success($place);
+                return $this->get('responseService')->success();
 
             } else {
                 $message = array(
