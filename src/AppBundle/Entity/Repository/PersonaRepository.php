@@ -147,7 +147,7 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
      */
     private function getRelatedPlaces($personas, $userId) {
         foreach($personas as &$persona) {
-            $sqlRelatedPersonas = "SELECT pla.*, UNIX_TIMESTAMP(CAST(pla.created_at AS DATETIME)) as created_at_timestamp,
+            $sqlRelatedPlaces = "SELECT pla.*, UNIX_TIMESTAMP(CAST(pla.created_at AS DATETIME)) as created_at_timestamp,
                                   CASE
                                      WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
                                      ELSE false
@@ -156,9 +156,10 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
                               FROM places pla
                               INNER JOIN persona_place pp ON pp.place_id = pla.id
                               INNER JOIN personas p ON pp.persona_id = p.id
-                              LEFT JOIN place_favourites f ON f.place_id = p.id
-                              WHERE p.id = :personaId";
-            $places = $this->getEntityManager()->getConnection()->executeQuery($sqlRelatedPersonas, array(
+                              LEFT JOIN place_favourites f ON f.place_id = pla.id
+                              WHERE p.id = :personaId
+                              GROUP BY pla.id";
+            $places = $this->getEntityManager()->getConnection()->executeQuery($sqlRelatedPlaces, array(
                 'personaId' => $persona['id'],
                 'userId' => $userId
             ))->fetchAll();
