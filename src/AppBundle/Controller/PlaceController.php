@@ -178,7 +178,12 @@ class PlaceController extends FOSRestController {
             $em = $this->getDoctrine()->getManager();
             $em->persist($comment);
             $em->flush();
-            return $this->get('responseService')->success();
+
+            $username = ($comment->getUser()->getName()) ? $comment->getUser()->getName() : 'anonymous';
+            return $this->get('responseService')->success(array(
+                'username' => $username,
+                'text'     => $comment->getText()
+            ));
         }
     }
 
@@ -233,13 +238,14 @@ class PlaceController extends FOSRestController {
                 $em->persist($place);
                 $em->flush();
 
-                return $this->get('responseService')->success();
+                return $this->get('responseService')->success(array('state' => true));
 
             } else {
-                $message = array(
-                    'message' => 'Relationship already exist'
-                );
-                return $this->get('responseService')->internalServerError('Internal Server Error', array($message));
+                $place->removeFavouriteUser($user);
+                $em->persist($place);
+                $em->flush();
+
+                return $this->get('responseService')->success(array('state' => false));
             }
 
         } catch(\ExportException $e) {

@@ -206,13 +206,14 @@ class PersonaController extends FOSRestController {
                 $em->persist($persona);
                 $em->flush();
 
-                return $this->get('responseService')->success();
+                return $this->get('responseService')->success(array('state' => true));
 
             } else {
-                $message = array(
-                    'message' => 'Relationship already exist'
-                );
-                return $this->get('responseService')->internalServerError('Internal Server Error', $message);
+                $persona->removeFavouriteUser($user);
+                $em->persist($persona);
+                $em->flush();
+
+                return $this->get('responseService')->success(array('state' => false));
             }
 
         } catch(\ExportException $e) {
@@ -241,13 +242,14 @@ class PersonaController extends FOSRestController {
                 $em->persist($persona);
                 $em->flush();
 
-                return $this->get('responseService')->success();
+                return $this->get('responseService')->success(array('state' => true));
 
             } else {
-                $message = array(
-                    'message' => 'Relationship already exist'
-                );
-                return $this->get('responseService')->internalServerError('Internal Server Error', array($message));
+                $persona->removeFavouriteUser($user);
+                $em->persist($persona);
+                $em->flush();
+
+                return $this->get('responseService')->success(array('state' => false));
             }
 
         } catch(\ExportException $e) {
