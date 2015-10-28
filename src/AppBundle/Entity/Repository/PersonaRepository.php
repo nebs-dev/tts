@@ -33,7 +33,7 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
 
         $personas = $this->findGallery($personas);
         $personas = $this->getRelatedPlaces($personas, $userId);
-        return (count($personas) > 0) ? $personas[0] : array();
+        return (count($personas) > 0) ? $personas[0] : null;
     }
 
     /**

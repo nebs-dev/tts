@@ -28,6 +28,8 @@ class PlaceController extends FOSRestController {
 
         // find place by ID
         $place = $em->getRepository('AppBundle:Place')->getOne($placeId, $user->getId());
+        if(!$place) return $this->get('responseService')->notFound();
+
         return $this->get('responseService')->success($place);
     }
 

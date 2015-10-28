@@ -32,7 +32,7 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
         $places = $this->findGallery($places);
         $places = $this->getComments($places);
         $places = $this->getRelatedPersonas($places, $userId);
-        return (count($places) > 0) ? $places[0] : array();
+        return (count($places) > 0) ? $places[0] : null;
     }
 
     /**

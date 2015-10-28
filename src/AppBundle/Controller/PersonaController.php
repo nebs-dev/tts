@@ -28,6 +28,8 @@ class PersonaController extends FOSRestController {
 
         // find persona by ID
         $persona = $em->getRepository('AppBundle:Persona')->getOne($personaId, $user->getId());
+        if(!$persona) return $this->get('responseService')->notFound();
+
         return $this->get('responseService')->success($persona);
     }
 
