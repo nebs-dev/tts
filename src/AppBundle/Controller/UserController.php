@@ -85,9 +85,10 @@ class UserController extends FOSRestController {
             return $this->get('responseService')->badRequest($errors);
         } else {
             $em = $this->getDoctrine()->getManager();
-//            $user->encryptPassword();
             $em->persist($user);
             $em->flush();
+
+            $user = $em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
             return $this->get('responseService')->success($user);
         }
     }
@@ -107,6 +108,8 @@ class UserController extends FOSRestController {
         ]);
 
         if($user = $this->get('userService')->loginFacebook($request, $fb)) {
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
             return $this->get('responseService')->success($user);
         }
 
@@ -121,6 +124,8 @@ class UserController extends FOSRestController {
             return $this->get('responseService')->badRequest();
 
         if($user = $this->get('userService')->loginTwitter($request)) {
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
             return $this->get('responseService')->success($user);
         }
 
