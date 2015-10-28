@@ -232,7 +232,7 @@ class PlaceController extends FOSRestController {
 
             if(!$user || !$place) return $this->get('responseService')->notFound();
 
-            // if relationship doesn't exist
+            // if relationship doesn't exist -> favourite
             if(!$place->getFavouriteUsers()->contains($user)) {
                 $place->addFavouriteUser($user);
                 $em->persist($place);
@@ -240,6 +240,7 @@ class PlaceController extends FOSRestController {
 
                 return $this->get('responseService')->success(array('state' => true));
 
+            // unfavourite
             } else {
                 $place->removeFavouriteUser($user);
                 $em->persist($place);

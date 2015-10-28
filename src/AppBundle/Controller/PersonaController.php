@@ -201,6 +201,7 @@ class PersonaController extends FOSRestController {
 
             if(!$user || !$persona) return $this->get('responseService')->notFound();
 
+            // if relationship doesn't exist -> favourite
             if(!$persona->getFavouriteUsers()->contains($user)) {
                 $persona->addFavouriteUser($user);
                 $em->persist($persona);
@@ -208,6 +209,7 @@ class PersonaController extends FOSRestController {
 
                 return $this->get('responseService')->success(array('state' => true));
 
+            // unfavourite
             } else {
                 $persona->removeFavouriteUser($user);
                 $em->persist($persona);
@@ -236,7 +238,7 @@ class PersonaController extends FOSRestController {
 
             if(!$user || !$persona) return $this->get('responseService')->notFound();
 
-            // if relationship doesn't exist
+            // if relationship doesn't exist -> like
             if(!$persona->getLikeUsers()->contains($user)) {
                 $persona->addLikeUser($user);
                 $em->persist($persona);
@@ -244,6 +246,7 @@ class PersonaController extends FOSRestController {
 
                 return $this->get('responseService')->success(array('state' => true));
 
+            // unlike
             } else {
                 $persona->removeFavouriteUser($user);
                 $em->persist($persona);
