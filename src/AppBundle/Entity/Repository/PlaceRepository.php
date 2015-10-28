@@ -157,7 +157,14 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
      */
     private function getComments($places) {
         foreach($places as &$place) {
-            $sqlPlaceComments = "SELECT c.* FROM comments c WHERE c.place_id = :placeId";
+            $sqlPlaceComments = "SELECT c.*,
+                                  CASE
+                                     WHEN u.name IS NOT NULL THEN u.name
+                                     ELSE 'anonymous'
+                                  END as username
+                                FROM comments c
+                                INNER JOIN users u ON u.id = c.user_id
+                                WHERE c.place_id = :placeId";
             $comments = $this->getEntityManager()->getConnection()->executeQuery($sqlPlaceComments, array(
                 'placeId' => $place['id']
             ))->fetchAll();
