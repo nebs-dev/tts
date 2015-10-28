@@ -53,7 +53,7 @@ class UserController extends FOSRestController {
      */
     public function getUserAction($token) {
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository('AppBundle:User')->findOneByToken($token);
+        $user = $em->getRepository('AppBundle:User')->getOneByToken($token);
 
         if(!$user) return $this->get('responseService')->notFound();
 

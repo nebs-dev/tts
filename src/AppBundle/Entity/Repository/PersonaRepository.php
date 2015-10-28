@@ -16,6 +16,10 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
                      WHEN f.persona_id IS NOT NULL AND f.user_id = :userId THEN true
                      ELSE false
                   END as favourited,
+                  CASE
+                     WHEN l.persona_id IS NOT NULL AND l.user_id = :userId THEN true
+                     ELSE false
+                  END as liked,
                   (SELECT COUNT(*) FROM persona_favourites fav WHERE fav.persona_id = f.persona_id) as totalFav,
                   (SELECT COUNT(*) FROM persona_likes lik WHERE lik.persona_id = l.persona_id) as totalLikes
                 FROM personas p
