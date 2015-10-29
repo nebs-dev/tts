@@ -52,14 +52,11 @@ class UserService {
             $platform = $request->request->get('platform');
 
             // If user exists
-            if($user = $this->em->getRepository('AppBundle:User')->findOneByFacebookId($facebookId)) {
+            if($user = $this->em->getRepository('AppBundle:User')->findOneByEmail($email)) {
                 $user->setEmail($email);
                 $user->setPhoto($photo);
                 $this->em->persist($user);
                 $this->em->flush();
-
-                $user = $this->em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
-                return $user;
 
             // New facebook user
             } else {
@@ -78,10 +75,10 @@ class UserService {
 
                 $this->em->persist($user);
                 $this->em->flush();
-
-                $user = $this->em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
-                return $user;
             }
+
+            $user = $this->em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
+            return $user;
 
         } catch(\FacebookResponseException $e) {
             return false;
