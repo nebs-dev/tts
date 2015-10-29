@@ -58,6 +58,7 @@ class UserService {
                 $this->em->persist($user);
                 $this->em->flush();
 
+                $user = $this->em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
                 return $user;
 
             // New facebook user
@@ -78,6 +79,7 @@ class UserService {
                 $this->em->persist($user);
                 $this->em->flush();
 
+                $user = $this->em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
                 return $user;
             }
 
