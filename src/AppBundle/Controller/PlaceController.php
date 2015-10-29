@@ -226,7 +226,12 @@ class PlaceController extends FOSRestController {
         if(!$this->get('permissionService')->checkToken($request))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
+        $state = $request->request->get('state');
         $em = $this->getDoctrine()->getManager();
+
+        // State is mandatory
+        if(!isset($state))
+            return $this->get('responseService')->badRequest();
 
         try {
             $place = $em->getRepository('AppBundle:Place')->find($placeId);
@@ -236,20 +241,22 @@ class PlaceController extends FOSRestController {
 
             // if relationship doesn't exist -> favourite
             if(!$place->getFavouriteUsers()->contains($user)) {
-                $place->addFavouriteUser($user);
-                $em->persist($place);
-                $em->flush();
-
-                return $this->get('responseService')->success(array('state' => true));
+                if($state) {
+                    $place->addFavouriteUser($user);
+                    $em->persist($place);
+                    $em->flush();
+                }
 
             // unfavourite
             } else {
-                $place->removeFavouriteUser($user);
-                $em->persist($place);
-                $em->flush();
-
-                return $this->get('responseService')->success(array('state' => false));
+                if(!$state) {
+                    $place->removeFavouriteUser($user);
+                    $em->persist($place);
+                    $em->flush();
+                }
             }
+
+            return $this->get('responseService')->success(array('state' => $state));
 
         } catch(\ExportException $e) {
             return $this->get('responseService')->internalServerError($e->getMessage());

@@ -195,7 +195,12 @@ class PersonaController extends FOSRestController {
         if(!$this->get('permissionService')->checkToken($request))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
+        $state = $request->request->get('state');
         $em = $this->getDoctrine()->getManager();
+
+        // State is mandatory
+        if(!isset($state))
+            return $this->get('responseService')->badRequest();
 
         try {
             $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
@@ -205,20 +210,22 @@ class PersonaController extends FOSRestController {
 
             // if relationship doesn't exist -> favourite
             if(!$persona->getFavouriteUsers()->contains($user)) {
-                $persona->addFavouriteUser($user);
-                $em->persist($persona);
-                $em->flush();
-
-                return $this->get('responseService')->success(array('state' => true));
+                if($state) {
+                    $persona->addFavouriteUser($user);
+                    $em->persist($persona);
+                    $em->flush();
+                }
 
             // unfavourite
             } else {
-                $persona->removeFavouriteUser($user);
-                $em->persist($persona);
-                $em->flush();
-
-                return $this->get('responseService')->success(array('state' => false));
+                if(!$state) {
+                    $persona->removeFavouriteUser($user);
+                    $em->persist($persona);
+                    $em->flush();
+                }
             }
+
+            return $this->get('responseService')->success(array('state' => $state));
 
         } catch(\ExportException $e) {
             return $this->get('responseService')->internalServerError($e->getMessage());
@@ -232,7 +239,12 @@ class PersonaController extends FOSRestController {
         if(!$this->get('permissionService')->checkToken($request))
             return $this->get('responseService')->accessDenied('INVALID_TOKEN');
 
+        $state = $request->request->get('state');
         $em = $this->getDoctrine()->getManager();
+
+        // State is mandatory
+        if(!isset($state))
+            return $this->get('responseService')->badRequest();
 
         try {
             $persona = $em->getRepository('AppBundle:Persona')->find($personaId);
@@ -242,20 +254,22 @@ class PersonaController extends FOSRestController {
 
             // if relationship doesn't exist -> like
             if(!$persona->getLikeUsers()->contains($user)) {
-                $persona->addLikeUser($user);
-                $em->persist($persona);
-                $em->flush();
-
-                return $this->get('responseService')->success(array('state' => true));
+                if($state) {
+                    $persona->addLikeUser($user);
+                    $em->persist($persona);
+                    $em->flush();
+                }
 
             // unlike
             } else {
-                $persona->removeLikeUser($user);
-                $em->persist($persona);
-                $em->flush();
-
-                return $this->get('responseService')->success(array('state' => false));
+                if(!$state) {
+                    $persona->removeLikeUser($user);
+                    $em->persist($persona);
+                    $em->flush();
+                }
             }
+
+            return $this->get('responseService')->success(array('state' => $state));
 
         } catch(\ExportException $e) {
             return $this->get('responseService')->internalServerError($e->getMessage());

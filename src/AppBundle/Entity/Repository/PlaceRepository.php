@@ -197,8 +197,8 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
                               FROM personas per
                               INNER JOIN persona_place pp ON pp.persona_id = per.id
                               INNER JOIN places p ON pp.place_id = p.id
-                              LEFT JOIN persona_favourites f ON f.persona_id = p.id
-                              LEFT JOIN persona_likes l ON l.persona_id = p.id
+                              LEFT JOIN persona_favourites f ON f.persona_id = per.id
+                              LEFT JOIN persona_likes l ON l.persona_id = per.id
                               WHERE p.id = :placeId
                               GROUP BY per.id";
             $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlRelatedPersonas, array(
