@@ -2,7 +2,6 @@
 
 namespace AppBundle\Extensions;
 
-use AppBundle\Entity\Facebook;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -53,8 +52,8 @@ class UserService {
             $platform = $request->request->get('platform');
 
             // If user exists
-            if($facebook = $this->em->getRepository('AppBundle:Facebook')->findOneByFacebookId($facebookId)) {
-                $user = $facebook->getUser();
+            if($user = $this->em->getRepository('AppBundle:User')->findOneByFacebookId($facebookId)) {
+                $user->setEmail($email);
                 $user->setPhoto($photo);
                 $this->em->persist($user);
                 $this->em->flush();
@@ -66,18 +65,16 @@ class UserService {
                 $user = new User();
                 $user->setPlatform($platform);
                 $user->setPhoto($photo);
-                $this->em->persist($user);
-                $this->em->flush();
+                $user->setEmail($email);
+                $user->setFacebookId($facebookId);
 
-                $facebook = new Facebook();
-                $facebook->setPhoto($photo);
-                $facebook->setEmail($email);
-                $facebook->setFacebookId($facebookId);
-                $facebook->setUser($user);
-                $this->em->persist($facebook);
-                $this->em->flush();
+                $token = $request->request->get('token');
+                if(!$token) {
+                    $random = substr( md5(rand()), 0, 7);
+                    $newToken = sha1('MIDGET' . $random .'NINJA');
+                    $user->setToken($newToken);
+                }
 
-                $user->setFacebook($facebook);
                 $this->em->persist($user);
                 $this->em->flush();
 

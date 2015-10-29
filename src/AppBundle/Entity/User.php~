@@ -56,14 +56,9 @@ class User {
     private $comments;
 
     /**
-     * @ORM\OneToOne(targetEntity="Facebook", cascade={"all"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $facebook;
-
-    /**
-     * @ORM\OneToOne(targetEntity="Twitter", cascade={"all"})
-     */
-    private $twitter;
+    private $facebookId;
 
     /**
      * @ORM\ManyToMany(targetEntity="Place", mappedBy="favouriteUsers", cascade={"all"})
@@ -84,14 +79,18 @@ class User {
     private $likePersonas;
 
 
+
     /**
-     * @ORM\PrePersist
+     * Constructor
      */
+    public function __construct() {
+        $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
     public function encryptPassword() {
         if(!is_null($this->password))
             $this->password = password_hash($this->password, PASSWORD_BCRYPT, array('cost' => 12));
     }
-
 
     /**
      * @return integer
@@ -209,13 +208,6 @@ class User {
     }
 
     /**
-     * Constructor
-     */
-    public function __construct() {
-        $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
      * Add comment
      *
      * @param \AppBundle\Entity\Comment $comment
@@ -244,51 +236,6 @@ class User {
      */
     public function getComments() {
         return $this->comments;
-    }
-
-
-    /**
-     * Set facebook
-     *
-     * @param \AppBundle\Entity\Facebook $facebook
-     *
-     * @return User
-     */
-    public function setFacebook(\AppBundle\Entity\Facebook $facebook = null) {
-        $this->facebook = $facebook;
-
-        return $this;
-    }
-
-    /**
-     * Get facebook
-     *
-     * @return \AppBundle\Entity\Facebook
-     */
-    public function getFacebook() {
-        return $this->facebook;
-    }
-
-    /**
-     * Set twitter
-     *
-     * @param \AppBundle\Entity\Twitter $twitter
-     *
-     * @return User
-     */
-    public function setTwitter(\AppBundle\Entity\Twitter $twitter = null) {
-        $this->twitter = $twitter;
-
-        return $this;
-    }
-
-    /**
-     * Get twitter
-     *
-     * @return \AppBundle\Entity\Twitter
-     */
-    public function getTwitter() {
-        return $this->twitter;
     }
 
     /**
@@ -357,5 +304,39 @@ class User {
     public function getFavouritePersonas()
     {
         return $this->favouritePersonas;
+    }
+
+    /**
+     * Add likePersona
+     *
+     * @param \AppBundle\Entity\Persona $likePersona
+     *
+     * @return User
+     */
+    public function addLikePersona(\AppBundle\Entity\Persona $likePersona)
+    {
+        $this->likePersonas[] = $likePersona;
+
+        return $this;
+    }
+
+    /**
+     * Remove likePersona
+     *
+     * @param \AppBundle\Entity\Persona $likePersona
+     */
+    public function removeLikePersona(\AppBundle\Entity\Persona $likePersona)
+    {
+        $this->likePersonas->removeElement($likePersona);
+    }
+
+    /**
+     * Get likePersonas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getLikePersonas()
+    {
+        return $this->likePersonas;
     }
 }

@@ -13,7 +13,7 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
     public function getOne($placeId, $userId) {
         $sql = "SELECT p.*, UNIX_TIMESTAMP(CAST(p.created_at AS DATETIME)) as created_at_timestamp,
                   CASE
-                     WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
+                     WHEN EXISTS(SELECT 1 FROM place_favourites as fff WHERE fff.user_id = :userId AND fff.place_id = p.id) THEN true
                      ELSE false
                   END as favourited,
                   (SELECT COUNT(*) FROM place_favourites fav WHERE fav.place_id = f.place_id) as totalFav
@@ -53,7 +53,7 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
 
         $sqlFindPlaces = "SELECT p.*, UNIX_TIMESTAMP(CAST(p.created_at AS DATETIME)) as created_at_timestamp,
                               CASE
-                                 WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
+                                 WHEN EXISTS(SELECT 1 FROM place_favourites as fff WHERE fff.user_id = :userId AND fff.place_id = p.id) THEN true
                                  ELSE false
                               END as favourited,
                               (SELECT COUNT(*) FROM place_favourites fav WHERE fav.place_id = f.place_id) as totalFav
@@ -185,11 +185,11 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
         foreach($places as &$place) {
             $sqlRelatedPersonas = "SELECT per.*, UNIX_TIMESTAMP(CAST(per.created_at AS DATETIME)) as created_at_timestamp,
                                   CASE
-                                     WHEN f.persona_id IS NOT NULL AND f.user_id = :userId THEN true
+                                     WHEN EXISTS(SELECT 1 FROM persona_favourites as fff WHERE fff.user_id = :userId AND fff.persona_id = per.id) THEN true
                                      ELSE false
                                   END as favourited,
                                   CASE
-                                     WHEN l.persona_id AND l.user_id = :userId IS NOT NULL THEN true
+                                     WHEN EXISTS(SELECT 1 FROM persona_likes as lll WHERE lll.user_id = :userId AND lll.persona_id = per.id) THEN true
                                      ELSE false
                                   END as liked,
                                   (SELECT COUNT(*) FROM persona_favourites fav WHERE fav.persona_id = f.persona_id) as totalFav,
@@ -197,8 +197,8 @@ class PlaceRepository extends \Doctrine\ORM\EntityRepository {
                               FROM personas per
                               INNER JOIN persona_place pp ON pp.persona_id = per.id
                               INNER JOIN places p ON pp.place_id = p.id
-                              LEFT JOIN persona_favourites f ON f.persona_id = per.id
-                              LEFT JOIN persona_likes l ON l.persona_id = per.id
+                              LEFT JOIN persona_favourites f ON f.persona_id = p.id
+                              LEFT JOIN persona_likes l ON l.persona_id = p.id
                               WHERE p.id = :placeId
                               GROUP BY per.id";
             $personas = $this->getEntityManager()->getConnection()->executeQuery($sqlRelatedPersonas, array(

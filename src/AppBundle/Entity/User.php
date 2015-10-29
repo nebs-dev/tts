@@ -56,14 +56,9 @@ class User {
     private $comments;
 
     /**
-     * @ORM\OneToOne(targetEntity="Facebook", cascade={"all"})
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $facebook;
-
-    /**
-     * @ORM\OneToOne(targetEntity="Twitter", cascade={"all"})
-     */
-    private $twitter;
+    private $facebookId;
 
     /**
      * @ORM\ManyToMany(targetEntity="Place", mappedBy="favouriteUsers", cascade={"all"})
@@ -84,12 +79,17 @@ class User {
     private $likePersonas;
 
 
-
-    public function encryptPassword() {
-        if(!is_null($this->password))
-            $this->password = password_hash($this->password, PASSWORD_BCRYPT, array('cost' => 12));
+    /**
+     * Constructor
+     */
+    public function __construct() {
+        $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
+    public function encryptPassword() {
+        if (!is_null($this->password))
+            $this->password = password_hash($this->password, PASSWORD_BCRYPT, array('cost' => 12));
+    }
 
     /**
      * @return integer
@@ -207,13 +207,6 @@ class User {
     }
 
     /**
-     * Constructor
-     */
-    public function __construct() {
-        $this->comments = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
      * Add comment
      *
      * @param \AppBundle\Entity\Comment $comment
@@ -244,51 +237,6 @@ class User {
         return $this->comments;
     }
 
-
-    /**
-     * Set facebook
-     *
-     * @param \AppBundle\Entity\Facebook $facebook
-     *
-     * @return User
-     */
-    public function setFacebook(\AppBundle\Entity\Facebook $facebook = null) {
-        $this->facebook = $facebook;
-
-        return $this;
-    }
-
-    /**
-     * Get facebook
-     *
-     * @return \AppBundle\Entity\Facebook
-     */
-    public function getFacebook() {
-        return $this->facebook;
-    }
-
-    /**
-     * Set twitter
-     *
-     * @param \AppBundle\Entity\Twitter $twitter
-     *
-     * @return User
-     */
-    public function setTwitter(\AppBundle\Entity\Twitter $twitter = null) {
-        $this->twitter = $twitter;
-
-        return $this;
-    }
-
-    /**
-     * Get twitter
-     *
-     * @return \AppBundle\Entity\Twitter
-     */
-    public function getTwitter() {
-        return $this->twitter;
-    }
-
     /**
      * Add favouritePlace
      *
@@ -296,8 +244,7 @@ class User {
      *
      * @return User
      */
-    public function addFavouritePlace(\AppBundle\Entity\Place $favouritePlace)
-    {
+    public function addFavouritePlace(\AppBundle\Entity\Place $favouritePlace) {
         $this->favouritePlaces[] = $favouritePlace;
 
         return $this;
@@ -308,8 +255,7 @@ class User {
      *
      * @param \AppBundle\Entity\Place $favouritePlace
      */
-    public function removeFavouritePlace(\AppBundle\Entity\Place $favouritePlace)
-    {
+    public function removeFavouritePlace(\AppBundle\Entity\Place $favouritePlace) {
         $this->favouritePlaces->removeElement($favouritePlace);
     }
 
@@ -318,8 +264,7 @@ class User {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getFavouritePlaces()
-    {
+    public function getFavouritePlaces() {
         return $this->favouritePlaces;
     }
 
@@ -330,8 +275,7 @@ class User {
      *
      * @return User
      */
-    public function addFavouritePersona(\AppBundle\Entity\Persona $favouritePersona)
-    {
+    public function addFavouritePersona(\AppBundle\Entity\Persona $favouritePersona) {
         $this->favouritePersonas[] = $favouritePersona;
 
         return $this;
@@ -342,8 +286,7 @@ class User {
      *
      * @param \AppBundle\Entity\Persona $favouritePersona
      */
-    public function removeFavouritePersona(\AppBundle\Entity\Persona $favouritePersona)
-    {
+    public function removeFavouritePersona(\AppBundle\Entity\Persona $favouritePersona) {
         $this->favouritePersonas->removeElement($favouritePersona);
     }
 
@@ -352,8 +295,7 @@ class User {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getFavouritePersonas()
-    {
+    public function getFavouritePersonas() {
         return $this->favouritePersonas;
     }
 
@@ -364,8 +306,7 @@ class User {
      *
      * @return User
      */
-    public function addLikePersona(\AppBundle\Entity\Persona $likePersona)
-    {
+    public function addLikePersona(\AppBundle\Entity\Persona $likePersona) {
         $this->likePersonas[] = $likePersona;
 
         return $this;
@@ -376,8 +317,7 @@ class User {
      *
      * @param \AppBundle\Entity\Persona $likePersona
      */
-    public function removeLikePersona(\AppBundle\Entity\Persona $likePersona)
-    {
+    public function removeLikePersona(\AppBundle\Entity\Persona $likePersona) {
         $this->likePersonas->removeElement($likePersona);
     }
 
@@ -386,8 +326,29 @@ class User {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getLikePersonas()
-    {
+    public function getLikePersonas() {
         return $this->likePersonas;
+    }
+
+    /**
+     * Set facebookId
+     *
+     * @param string $facebookId
+     *
+     * @return User
+     */
+    public function setFacebookId($facebookId) {
+        $this->facebookId = $facebookId;
+
+        return $this;
+    }
+
+    /**
+     * Get facebookId
+     *
+     * @return string
+     */
+    public function getFacebookId() {
+        return $this->facebookId;
     }
 }

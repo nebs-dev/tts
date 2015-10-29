@@ -13,9 +13,7 @@ AppBundle\Entity\User:
             expose: true
         platform:
             expose: true
-        facebook:
-            expose: true
-        twitter:
+        facebookId:
             expose: true
         favouritePlaces:
             expose: true

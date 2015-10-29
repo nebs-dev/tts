@@ -13,11 +13,11 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
     public function getOne($personaId, $userId) {
         $sql = "SELECT p.*, UNIX_TIMESTAMP(CAST(p.created_at AS DATETIME)) as created_at_timestamp,
                   CASE
-                     WHEN f.persona_id IS NOT NULL AND f.user_id = :userId THEN true
+                     WHEN EXISTS(SELECT 1 FROM persona_favourites as fff WHERE fff.user_id = :userId AND fff.persona_id = p.id) THEN true
                      ELSE false
                   END as favourited,
                   CASE
-                     WHEN l.persona_id IS NOT NULL AND l.user_id = :userId THEN true
+                     WHEN EXISTS(SELECT 1 FROM persona_likes as lll WHERE lll.user_id = :userId AND lll.persona_id = p.id) THEN true
                      ELSE false
                   END as liked,
                   (SELECT COUNT(*) FROM persona_favourites fav WHERE fav.persona_id = f.persona_id) as totalFav,
@@ -57,11 +57,11 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
 
         $sqlFindPersonas = "SELECT p.*,
                               CASE
-                                 WHEN f.persona_id IS NOT NULL AND f.user_id = :userId THEN true
+                                 WHEN EXISTS(SELECT 1 FROM persona_favourites as fff WHERE fff.user_id = :userId AND fff.persona_id = p.id) THEN true
                                  ELSE false
                               END as favourited,
                               CASE
-                                 WHEN l.persona_id AND l.user_id = :userId IS NOT NULL THEN true
+                                 WHEN EXISTS(SELECT 1 FROM persona_likes as lll WHERE lll.user_id = :userId AND lll.persona_id = p.id) THEN true
                                  ELSE false
                               END as liked,
                               (SELECT COUNT(*) FROM persona_favourites fav WHERE fav.persona_id = f.persona_id) as totalFav,
@@ -153,7 +153,7 @@ class PersonaRepository extends \Doctrine\ORM\EntityRepository {
         foreach($personas as &$persona) {
             $sqlRelatedPlaces = "SELECT pla.*, UNIX_TIMESTAMP(CAST(pla.created_at AS DATETIME)) as created_at_timestamp,
                                   CASE
-                                     WHEN f.place_id IS NOT NULL AND f.user_id = :userId THEN true
+                                     WHEN EXISTS(SELECT 1 FROM place_favourites as fff WHERE fff.user_id = :userId AND fff.place_id = pla.id) THEN true
                                      ELSE false
                                   END as favourited,
                                   (SELECT COUNT(*) FROM place_favourites fav WHERE fav.place_id = f.place_id) as totalFav

@@ -25,36 +25,6 @@ AppBundle\Entity\User:
                 min: 1
                 max: 2
 
-AppBundle\Entity\Facebook:
-    constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: facebookID
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: email
-            ignoreNull: true
-    properties:
-        facebookID:
-            - NotBlank:
-            - Type:
-                type: int
-        email:
-            - NotBlank: ~
-            - Email:
-
-AppBundle\Entity\Twitter:
-    constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: twitterID
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: email
-            ignoreNull: true
-    properties:
-        twitterID:
-            - NotBlank:
-            - Type:
-                type: int
-        email:
-            - NotBlank: ~
-            - Email:
-
 AppBundle\Entity\Place:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
