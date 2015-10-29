@@ -250,7 +250,7 @@ class PersonaController extends FOSRestController {
 
             // unlike
             } else {
-                $persona->removeFavouriteUser($user);
+                $persona->removeLikeUser($user);
                 $em->persist($persona);
                 $em->flush();
 
