@@ -50,11 +50,15 @@ class UserService {
             $email = $userNode->getField('email');
             $facebookId = $userNode->getID();
             $platform = $request->request->get('platform');
+            $name = $userNode->getField('name');
 
             // If user exists
             if($user = $this->em->getRepository('AppBundle:User')->findOneByEmail($email)) {
                 $user->setEmail($email);
                 $user->setPhoto($photo);
+                if (isset($name)) {
+                    $user->setName($name);
+                }
                 $this->em->persist($user);
                 $this->em->flush();
 
@@ -65,6 +69,9 @@ class UserService {
                 $user->setPhoto($photo);
                 $user->setEmail($email);
                 $user->setFacebookId($facebookId);
+                if (isset($name)) {
+                    $user->setName($name);
+                }
 
                 $token = $request->request->get('token');
                 if(!$token) {

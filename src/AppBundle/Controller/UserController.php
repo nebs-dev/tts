@@ -108,7 +108,7 @@ class UserController extends FOSRestController {
         ]);
 
         if($user = $this->get('userService')->loginFacebook($request, $fb)) {
-            $em = $this->getDoctrine()->getManager();
+//            $em = $this->getDoctrine()->getManager();
 //            $user = $em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
             return $this->get('responseService')->success($user);
         }
