@@ -92,6 +92,28 @@ class User {
     }
 
     /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload() {
+        $file = $this->getAbsolutePath();
+        if (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+    public function getAbsolutePath() {
+        return null === $this->photo
+            ? null
+            : $this->getUploadRootDir() . '/' . $this->photo;
+    }
+
+    protected function getUploadRootDir() {
+        // the absolute directory path where uploaded
+        // documents should be saved
+        return __DIR__ . '/../../../web';
+    }
+
+    /**
      * @return integer
      */
     public function getId() {

@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="persona_gallery")
  * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks()
  */
 class PersonaGallery {
 
@@ -28,6 +29,29 @@ class PersonaGallery {
      * @ORM\ManyToOne(targetEntity="Persona", inversedBy="gallery")
      */
     private $persona;
+
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload() {
+        $file = $this->getAbsolutePath();
+        if (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+    public function getAbsolutePath() {
+        return null === $this->image
+            ? null
+            : $this->getUploadRootDir() . '/' . $this->image;
+    }
+
+    protected function getUploadRootDir() {
+        // the absolute directory path where uploaded
+        // documents should be saved
+        return __DIR__ . '/../../../web';
+    }
 
 
     /**
