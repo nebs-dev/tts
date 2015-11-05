@@ -12,7 +12,7 @@ class UserRepository extends \Doctrine\ORM\EntityRepository {
 
     public function getOneByToken($token) {
 
-        $sql = "SELECT u.id, u.name, u.email, u.platform, u.token, u.photo FROM users u WHERE u.token = :token";
+        $sql = "SELECT u.id, u.name, u.email, u.platform, u.token, u.photo, u.facebook_id, u.twitter_id FROM users u WHERE u.token = :token";
 
         $users = $this->getEntityManager()->getConnection()->executeQuery($sql, array(
             'token' => $token

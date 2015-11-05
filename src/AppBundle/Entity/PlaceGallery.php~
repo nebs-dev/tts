@@ -3,12 +3,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
  * PlaceGallery
  *
  * @ORM\Table(name="place_gallery")
  * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks()
+ * @ExclusionPolicy("all")
  */
 class PlaceGallery {
 
@@ -16,11 +20,13 @@ class PlaceGallery {
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Expose
      */
     private $id;
 
     /**
      * @ORM\Column(name="image", type="string", length=255)
+     * @Expose
      */
     private $image;
 
@@ -29,6 +35,28 @@ class PlaceGallery {
      */
     private $place;
 
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload() {
+        $file = $this->getAbsolutePath();
+        if (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+    public function getAbsolutePath() {
+        return null === $this->image
+            ? null
+            : $this->getUploadRootDir() . '/' . $this->image;
+    }
+
+    protected function getUploadRootDir() {
+        // the absolute directory path where uploaded
+        // documents should be saved
+        return __DIR__ . '/../../../web';
+    }
 
     /**
      * Get id

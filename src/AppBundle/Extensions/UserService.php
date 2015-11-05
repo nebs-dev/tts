@@ -100,7 +100,50 @@ class UserService {
      * @return bool
      */
     public function loginTwitter($request) {
-        return false;
+        $twitterId = $request->request->get('user_id');
+        $name = $request->request->get('name');
+        $photo = $request->request->get('picture_url');
+        $platform = $request->request->get('platform');
+
+        try {
+            // If user exists
+            if($twitterId && $user = $this->em->getRepository('AppBundle:User')->findOneByTwitterId($twitterId)) {
+                $user->setTwitterId($twitterId);
+                if (isset($name)) {
+                    $user->setName($name);
+                }
+                $user->setPlatform($platform);
+                $user->setPhoto($photo);
+                $this->em->persist($user);
+                $this->em->flush();
+
+            // New twitter user
+            } else {
+                $user = new User();
+                $user->setPlatform($platform);
+                $user->setPhoto($photo);
+                $user->setTwitterId($twitterId);
+                if (isset($name)) {
+                    $user->setName($name);
+                }
+
+                $token = $request->request->get('token');
+                if (!$token) {
+                    $random = substr(md5(rand()), 0, 7);
+                    $newToken = sha1('MIDGET' . $random . 'NINJA');
+                    $user->setToken($newToken);
+                }
+
+                $this->em->persist($user);
+                $this->em->flush();
+            }
+
+            $user = $this->em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
+            return $user;
+
+        } catch (\ExportException $e) {
+            return $e->getMessage();
+        }
     }
 
     /**

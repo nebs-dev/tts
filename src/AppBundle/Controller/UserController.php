@@ -120,12 +120,10 @@ class UserController extends FOSRestController {
      * @Post("/twitter/signin")
      */
     public function postTwitterSigninAction(Request $request) {
-        if(!$request->request->get('twitterId'))
+        if(!$request->request->get('user_id') || !$request->request->get('platform'))
             return $this->get('responseService')->badRequest();
 
         if($user = $this->get('userService')->loginTwitter($request)) {
-            $em = $this->getDoctrine()->getManager();
-            $user = $em->getRepository('AppBundle:User')->getOneByToken($user->getToken());
             return $this->get('responseService')->success($user);
         }
 

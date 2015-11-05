@@ -61,6 +61,11 @@ class User {
     private $facebookId;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $twitterId;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Place", mappedBy="favouriteUsers", cascade={"all"})
      * @ORM\JoinTable(name="place_favourites")
      */
@@ -79,7 +84,6 @@ class User {
     private $likePersonas;
 
 
-
     /**
      * Constructor
      */
@@ -88,8 +92,30 @@ class User {
     }
 
     public function encryptPassword() {
-        if(!is_null($this->password))
+        if (!is_null($this->password))
             $this->password = password_hash($this->password, PASSWORD_BCRYPT, array('cost' => 12));
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload() {
+        $file = $this->getAbsolutePath();
+        if (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+    public function getAbsolutePath() {
+        return null === $this->photo
+            ? null
+            : $this->getUploadRootDir() . '/' . $this->photo;
+    }
+
+    protected function getUploadRootDir() {
+        // the absolute directory path where uploaded
+        // documents should be saved
+        return __DIR__ . '/../../../web';
     }
 
     /**
@@ -245,8 +271,7 @@ class User {
      *
      * @return User
      */
-    public function addFavouritePlace(\AppBundle\Entity\Place $favouritePlace)
-    {
+    public function addFavouritePlace(\AppBundle\Entity\Place $favouritePlace) {
         $this->favouritePlaces[] = $favouritePlace;
 
         return $this;
@@ -257,8 +282,7 @@ class User {
      *
      * @param \AppBundle\Entity\Place $favouritePlace
      */
-    public function removeFavouritePlace(\AppBundle\Entity\Place $favouritePlace)
-    {
+    public function removeFavouritePlace(\AppBundle\Entity\Place $favouritePlace) {
         $this->favouritePlaces->removeElement($favouritePlace);
     }
 
@@ -267,8 +291,7 @@ class User {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getFavouritePlaces()
-    {
+    public function getFavouritePlaces() {
         return $this->favouritePlaces;
     }
 
@@ -279,8 +302,7 @@ class User {
      *
      * @return User
      */
-    public function addFavouritePersona(\AppBundle\Entity\Persona $favouritePersona)
-    {
+    public function addFavouritePersona(\AppBundle\Entity\Persona $favouritePersona) {
         $this->favouritePersonas[] = $favouritePersona;
 
         return $this;
@@ -291,8 +313,7 @@ class User {
      *
      * @param \AppBundle\Entity\Persona $favouritePersona
      */
-    public function removeFavouritePersona(\AppBundle\Entity\Persona $favouritePersona)
-    {
+    public function removeFavouritePersona(\AppBundle\Entity\Persona $favouritePersona) {
         $this->favouritePersonas->removeElement($favouritePersona);
     }
 
@@ -301,8 +322,7 @@ class User {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getFavouritePersonas()
-    {
+    public function getFavouritePersonas() {
         return $this->favouritePersonas;
     }
 
@@ -313,8 +333,7 @@ class User {
      *
      * @return User
      */
-    public function addLikePersona(\AppBundle\Entity\Persona $likePersona)
-    {
+    public function addLikePersona(\AppBundle\Entity\Persona $likePersona) {
         $this->likePersonas[] = $likePersona;
 
         return $this;
@@ -325,8 +344,7 @@ class User {
      *
      * @param \AppBundle\Entity\Persona $likePersona
      */
-    public function removeLikePersona(\AppBundle\Entity\Persona $likePersona)
-    {
+    public function removeLikePersona(\AppBundle\Entity\Persona $likePersona) {
         $this->likePersonas->removeElement($likePersona);
     }
 
@@ -335,8 +353,29 @@ class User {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getLikePersonas()
-    {
+    public function getLikePersonas() {
         return $this->likePersonas;
+    }
+
+    /**
+     * Set facebookId
+     *
+     * @param string $facebookId
+     *
+     * @return User
+     */
+    public function setFacebookId($facebookId) {
+        $this->facebookId = $facebookId;
+
+        return $this;
+    }
+
+    /**
+     * Get facebookId
+     *
+     * @return string
+     */
+    public function getFacebookId() {
+        return $this->facebookId;
     }
 }
